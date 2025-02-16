@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management - RestoPro</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Main Dashboard Styles -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <!-- Users Specific Styles -->
+    <link rel="stylesheet" href="assets/css/users.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <img src="assets/img/logo.png" alt="RestoPro Logo" class="logo">
+            <h2>RestoPro</h2>
+        </div>
+        <ul class="nav-links">
+            <li>
+                <a href="dashboard.html">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="orders.html">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Orders</span>
+                </a>
+            </li>
+            <li>
+                <a href="menu.html">
+                    <i class="fas fa-utensils"></i>
+                    <span>Menu</span>
+                </a>
+            </li>
+            <li>
+                <a href="tables.html">
+                    <i class="fas fa-chair"></i>
+                    <span>Tables</span>
+                </a>
+            </li>
+            <li>
+                <a href="users.html" class="active">
+                    <i class="fas fa-users"></i>
+                    <span>Users</span>
+                </a>
+            </li>
+            <li>
+                <a href="reports.html">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Reports</span>
+                </a>
+            </li>
+            <li>
+                <a href="settings.html">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Bar -->
+        <header class="top-bar">
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" id="userSearch" placeholder="Search users...">
+            </div>
+            
+            <div class="user-menu">
+                <div class="notifications">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge">3</span>
+                </div>
+                <div class="profile">
+                    <img src="assets/img/avatar.jpg" alt="Profile">
+                    <span>Admin Name</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Users Content -->
+        <div class="dashboard-content">
+            <div class="content-header">
+                <h1>User Management</h1>
+                <div class="header-actions">
+                    <div class="filter-group">
+                        <div class="filter-label">
+                            <i class="fas fa-filter"></i>
+                            <span>Filter by:</span>
+                        </div>
+                        <select id="roleFilter" class="filter-select">
+                            <option value="">All Roles</option>
+                            <option value="admin">Admin</option>
+                            <option value="manager">Manager</option>
+                            <option value="staff">Staff</option>
+                            <option value="cashier">Cashier</option>
+                        </select>
+                        <select id="statusFilter" class="filter-select">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" id="addUserBtn">
+                        <i class="fas fa-plus"></i> Add User
+                    </button>
+                </div>
+            </div>
+
+            <!-- Role Summary Cards -->
+            <div class="role-summary">
+                <div class="summary-card">
+                    <div class="card-icon admin">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <div class="card-info">
+                        <h3>Admins</h3>
+                        <p class="count" id="adminCount">0</p>
+                        <span class="trend positive">+2 this month</span>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="card-icon manager">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <div class="card-info">
+                        <h3>Managers</h3>
+                        <p class="count" id="managerCount">0</p>
+                        <span class="trend positive">+1 this month</span>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="card-icon staff">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="card-info">
+                        <h3>Staff</h3>
+                        <p class="count" id="staffCount">0</p>
+                        <span class="trend positive">+5 this month</span>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="card-icon cashier">
+                        <i class="fas fa-cash-register"></i>
+                    </div>
+                    <div class="card-info">
+                        <h3>Cashiers</h3>
+                        <p class="count" id="cashierCount">0</p>
+                        <span class="trend positive">+3 this month</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Table -->
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Last Active</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Users will be dynamically added here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="assets/js/script.js"></script>
+    <script src="assets/js/users.js"></script>
+</body>
+</html> 

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Table Management - RestoPro</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Main Dashboard Styles -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <!-- Tables Specific Styles -->
+    <link rel="stylesheet" href="assets/css/tables.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <img src="assets/img/logo.png" alt="Logo" class="logo">
+            <h2>RestoPro</h2>
+        </div>
+        
+        <ul class="nav-links">
+            <li>
+                <a href="index.html">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="orders.html">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Orders</span>
+                </a>
+            </li>
+            <li>
+                <a href="menu.html">
+                    <i class="fas fa-utensils"></i>
+                    <span>Menu</span>
+                </a>
+            </li>
+            <li class="active">
+                <a href="tables.html">
+                    <i class="fas fa-chair"></i>
+                    <span>Tables</span>
+                </a>
+            </li>
+            <li>
+                <a href="users.html">
+                    <i class="fas fa-users"></i>
+                    <span>Users</span>
+                </a>
+            </li>
+            <li>
+                <a href="reports.html">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Reports</span>
+                </a>
+            </li>
+            <li>
+                <a href="settings.html">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Bar -->
+        <header class="top-bar">
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" id="tableSearch" placeholder="Search tables...">
+            </div>
+            
+            <div class="user-menu">
+                <div class="notifications">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge">3</span>
+                </div>
+                <div class="profile">
+                    <img src="assets/img/avatar.jpg" alt="Profile">
+                    <span>Admin Name</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Tables Content -->
+        <div class="dashboard-content">
+            <div class="tables-header">
+                <h1>Table Management</h1>
+                <div class="header-actions">
+                    <div class="status-filter">
+                        <select id="statusFilter">
+                            <option value="">All Status</option>
+                            <option value="available">Available</option>
+                            <option value="occupied">Occupied</option>
+                            <option value="dirty">Dirty</option>
+                        </select>
+                    </div>
+                    <button class="btn-add-table" id="addTableBtn">
+                        <i class="fas fa-plus"></i> Add New Table
+                    </button>
+                </div>
+            </div>
+
+            <!-- Status Summary -->
+            <div class="status-summary">
+                <div class="status-card available">
+                    <i class="fas fa-check-circle"></i>
+                    <div class="status-info">
+                        <h3>Available</h3>
+                        <p id="availableCount">0 Tables</p>
+                    </div>
+                </div>
+                <div class="status-card occupied">
+                    <i class="fas fa-users"></i>
+                    <div class="status-info">
+                        <h3>Occupied</h3>
+                        <p id="occupiedCount">0 Tables</p>
+                    </div>
+                </div>
+                <div class="status-card dirty">
+                    <i class="fas fa-broom"></i>
+                    <div class="status-info">
+                        <h3>Dirty</h3>
+                        <p id="dirtyCount">0 Tables</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tables Grid -->
+            <div class="tables-grid" id="tablesGrid">
+                <!-- Tables will be dynamically added here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="assets/js/script.js"></script>
+    <script src="assets/js/tables.js"></script>
+</body>
+</html> 

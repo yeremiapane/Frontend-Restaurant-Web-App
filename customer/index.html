@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pemesanan Makanan Modern</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="table-number">
+      <span class="label">Meja</span>
+      <span class="number">#08</span>
+    </div>
+    <div class="header-content">
+      <h1>Get Your Best</h1>
+      <h2>Food Around You</h2>
+    </div>
+  </header>
+
+  <!-- Categories -->
+  <section class="categories">
+    <div class="categories-container">
+      <button class="scroll-button scroll-left" type="button" aria-label="Scroll left">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <div class="categories-grid">
+        <div class="category-item active" data-category="makanan">
+          <i class="fas fa-utensils"></i>
+          <p>Makanan</p>
+        </div>
+        <div class="category-item" data-category="minuman">
+          <i class="fas fa-coffee"></i>
+          <p>Minuman</p>
+        </div>
+        <div class="category-item" data-category="snack">
+          <i class="fas fa-cookie"></i>
+          <p>Snack</p>
+        </div>
+      </div>
+      <button class="scroll-button scroll-right" type="button" aria-label="Scroll right">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+  </section>
+
+  <!-- Menu Items -->
+  <section class="menu-items">
+    <div class="menu-grid">
+      <!-- Menu items akan ditambahkan secara dinamis -->
+    </div>
+  </section>
+
+  <!-- Modal Detail Menu -->
+  <div id="menuModal" class="modal">
+    <div class="modal-content">
+      <button class="close-button" type="button" aria-label="Close modal">
+        <i class="fas fa-times"></i>
+      </button>
+      <div class="image-carousel">
+        <img src="" alt="Menu" class="menu-image">
+      </div>
+      <h2 class="menu-title">Nama Menu</h2>
+      <p class="menu-description">Deskripsi menu.</p>
+      <p class="menu-price">Rp <span id="price">0</span></p>
+      <div class="quantity">
+        <button id="decrease">-</button>
+        <span id="quantity">1</span>
+        <button id="increase">+</button>
+      </div>
+      <div class="add-ons">
+        <label><input type="checkbox" name="addon" value="5000"> Add-on 1 (+Rp 5000)</label>
+        <label><input type="checkbox" name="addon" value="3000"> Add-on 2 (+Rp 3000)</label>
+      </div>
+      <textarea placeholder="Catatan tambahan..."></textarea>
+      <button class="add-to-cart">Masukkan ke Keranjang</button>
+    </div>
+  </div>
+
+  <!-- Keranjang Belanja -->
+  <div class="cart">
+    <div class="cart-icon">
+      <i class="fas fa-shopping-cart"></i>
+      <span class="badge">0</span>
+    </div>
+    <div class="cart-content">
+      <h2>Keranjang Belanja <span class="close-cart">&times;</span></h2>
+      <div class="cart-items">
+        <!-- Item akan ditambahkan secara dinamis -->
+      </div>
+      <p class="cart-total">Total: Rp <span id="total">0</span></p>
+      <button class="checkout">Bayar</button>
+    </div>
+  </div>
+
+  <!-- Tambahkan ini di akhir body sebelum script -->
+  <div id="confirmationModal" class="confirmation-modal">
+    <div class="confirmation-content">
+      <h3 class="confirm-title">Konfirmasi</h3>
+      <p class="confirm-message">Apakah Anda yakin?</p>
+      <div class="confirm-buttons">
+        <button class="confirm-cancel">Batal</button>
+        <button class="confirm-ok">Ya, Lanjutkan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Pembayaran -->
+  <div id="paymentModal" class="payment-modal">
+    <div class="payment-content">
+      <h3>Pilih Metode Pembayaran</h3>
+      <div class="payment-methods">
+        <button class="payment-method cash">
+          <i class="fas fa-money-bill-wave"></i>
+          <span>Tunai</span>
+          <small>Bayar langsung di kasir</small>
+        </button>
+        <button class="payment-method qris">
+          <i class="fas fa-qrcode"></i>
+          <span>QRIS</span>
+          <small>Scan QR code untuk membayar</small>
+        </button>
+      </div>
+      <button class="close-payment">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal Pembayaran Tunai -->
+  <div id="cashPaymentModal" class="cash-payment-modal">
+    <div class="cash-payment-content">
+      <div class="success-animation">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <h3>Silahkan Menuju Kasir</h3>
+      <div class="payment-details">
+        <div class="detail-item">
+          <span class="label">Nomor Meja:</span>
+          <span class="value table-num">#08</span>
+        </div>
+        <div class="detail-item">
+          <span class="label">Total Pembayaran:</span>
+          <div class="total-amount">Rp <span id="cashAmount">0</span></div>
+        </div>
+      </div>
+      <p class="instruction">Tunjukkan nomor pesanan Anda kepada kasir:</p>
+      <div class="order-number">#<span id="orderNumber">0001</span></div>
+      <button class="done-btn">Selesai</button>
+    </div>
+  </div>
+
+  <script src="assets/js/script.js"></script>
+</body>
+</html>
