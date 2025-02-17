@@ -1,0 +1,141 @@
+<div class="dashboard-content">
+    <!-- 3D Stats Cards -->
+    <div class="stats-container">
+        <div class="stat-card available">
+            <div class="stat-icon">
+                <i class="fas fa-check-circle"></i>
+                <div class="icon-ring"></div>
+            </div>
+            <div class="stat-info">
+                <h3>Available Tables</h3>
+                <div class="stat-number">12</div>
+                <div class="stat-trend positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>2 more than yesterday</span>
+                </div>
+            </div>
+            <div class="stat-wave"></div>
+        </div>
+
+        <div class="stat-card occupied">
+            <div class="stat-icon">
+                <i class="fas fa-users"></i>
+                <div class="icon-ring"></div>
+            </div>
+            <div class="stat-info">
+                <h3>Occupied Tables</h3>
+                <div class="stat-number">8</div>
+                <div class="stat-trend">
+                    <i class="fas fa-clock"></i>
+                    <span>Updated just now</span>
+                </div>
+            </div>
+            <div class="stat-wave"></div>
+        </div>
+
+        <div class="stat-card dirty">
+            <div class="stat-icon">
+                <i class="fas fa-broom"></i>
+                <div class="icon-ring"></div>
+            </div>
+            <div class="stat-info">
+                <h3>Dirty Tables</h3>
+                <div class="stat-number">3</div>
+                <div class="stat-trend negative">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>Needs attention</span>
+                </div>
+            </div>
+            <div class="stat-wave"></div>
+        </div>
+    </div>
+
+    <!-- Active Orders Section -->
+    <div class="orders-section">
+        <div class="section-header">
+            <h2>Active Orders</h2>
+            <div class="filter-group">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search orders...">
+                </div>
+                <div class="filter-item">
+                    <select>
+                        <option value="all">All Status</option>
+                        <option value="pending">Pending Payment</option>
+                        <option value="paid">Paid</option>
+                        <option value="cooking">Cooking</option>
+                        <option value="ready">Ready to Serve</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Table</th>
+                        <th>Customer</th>
+                        <th>Items</th>
+                        <th>Notes</th>
+                        <th>Payment</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="order-row">
+                        <td>#ORD001</td>
+                        <td>
+                            <span class="table-badge">T-12</span>
+                        </td>
+                        <td>
+                            <div class="customer-info">
+                                <span class="customer-name">John Doe</span>
+                                <span class="customer-id">#CUS123</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="order-items">
+                                <span class="item-count">3 items</span>
+                                <div class="items-tooltip">
+                                    <p>1x Nasi Goreng Special</p>
+                                    <p>1x Juice Mangga</p>
+                                    <p>1x Es Teh Manis</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="order-notes">
+                                <span class="note-text">No onions</span>
+                                <i class="fas fa-info-circle"></i>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="payment-badge pending">Pending</span>
+                        </td>
+                        <td>
+                            <span class="status-badge waiting">Waiting Payment</span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-mark-paid" title="Mark as Paid">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button class="btn-serve" disabled title="Serve Order">
+                                    <i class="fas fa-utensils"></i>
+                                </button>
+                                <button class="btn-close" disabled title="Close Bill">
+                                    <i class="fas fa-flag-checkered"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- More order rows... -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div> 

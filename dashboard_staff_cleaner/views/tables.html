@@ -1,0 +1,98 @@
+<div class="tables-layout">
+    <!-- Floor Plan Header -->
+    <div class="section-header">
+        <h2>Restaurant Floor Plan</h2>
+        <div class="filter-group">
+            <div class="filter-item">
+                <select id="floorFilter">
+                    <option value="all">All Floors</option>
+                    <option value="1">Floor 1</option>
+                    <option value="2">Floor 2</option>
+                </select>
+            </div>
+            <div class="view-toggle">
+                <button class="active" data-view="grid">
+                    <i class="fas fa-th"></i>
+                </button>
+                <button data-view="list">
+                    <i class="fas fa-list"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tables Grid View -->
+    <div class="tables-grid">
+        <!-- Table Card -->
+        <div class="table-card available">
+            <div class="table-number">T-01</div>
+            <div class="table-icon">
+                <i class="fas fa-utensils"></i>
+            </div>
+            <div class="table-info">
+                <div class="status">Available</div>
+                <div class="capacity">4 Seats</div>
+            </div>
+            <div class="table-actions">
+                <button class="btn-assign" title="Assign Table">
+                    <i class="fas fa-user-plus"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Occupied Table -->
+        <div class="table-card occupied">
+            <div class="table-number">T-02</div>
+            <div class="table-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="table-info">
+                <div class="status">Occupied</div>
+                <div class="capacity">6 Seats</div>
+                <div class="customer-details">
+                    <span>Order #ORD002</span>
+                    <span>30 mins</span>
+                </div>
+            </div>
+            <div class="table-actions">
+                <button class="btn-view" title="View Details">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Dirty Table -->
+        <div class="table-card dirty">
+            <div class="table-number">T-03</div>
+            <div class="table-icon">
+                <i class="fas fa-broom"></i>
+            </div>
+            <div class="table-info">
+                <div class="status">Needs Cleaning</div>
+                <div class="capacity">2 Seats</div>
+            </div>
+            <div class="table-actions">
+                <button class="btn-clean" title="Mark as Cleaned">
+                    <i class="fas fa-check"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Add more table cards here -->
+    </div>
+
+    <!-- Table Details Modal -->
+    <div class="modal" id="tableModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Table Details</h3>
+                <button class="close-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Table details will be populated dynamically -->
+            </div>
+        </div>
+    </div>
+</div> 

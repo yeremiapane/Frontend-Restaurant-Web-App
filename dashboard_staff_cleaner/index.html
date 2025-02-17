@@ -3,13 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Dashboard - Restaurant Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/styles.css">
-    <title>Document</title>
+     <link rel="stylesheet" href="assets/css/completed.css">
+     <link rel="stylesheet" href="assets/css/tables.css">
+     <link rel="stylesheet" href="assets/css/modals.css">
 </head>
 <body>
-    
-    
+    <!-- Main Container -->
+    <div class="app-container">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <img src="assets/images/logo.png" alt="Logo" class="logo">
+                    <h2>RMS Staff</h2>
+                </div>
+                <button class="close-menu" id="closeMenu">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Profile Section -->
+            <div class="profile-section">
+                <div class="profile-image">
+                    <img src="assets/images/staff-avatar.png" alt="Staff Profile">
+                </div>
+                <div class="profile-info">
+                    <h3>John Smith</h3>
+                    <p>Staff Service</p>
+                </div>
+            </div>
+            
+            <!-- Menu Items -->
+            <ul class="sidebar-menu">
+                <li class="active">
+                    <a href="#" data-page="dashboard">
+                        <i class="fas fa-th-large"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-page="completed">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Orders Completed</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-page="tables">
+                        <i class="fas fa-border-all"></i>
+                        <span>Tables</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Logout Button -->
+            <div class="logout-section">
+                <button class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Top Navigation Bar -->
+            <header class="top-nav">
+                <button class="mobile-menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="page-title">
+                    <h1>Dashboard</h1>
+                </div>
+                <div class="nav-actions">
+                    <div class="notification-bell">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content Container -->
+            <main class="content-wrapper" id="mainContent">
+                <!-- Stats Section -->
+                <div class="stats-container">
+                    <div class="stat-card available">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Available Tables</h3>
+                            <div class="stat-number">12</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card occupied">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Occupied Tables</h3>
+                            <div class="stat-number">8</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card dirty">
+                        <div class="stat-icon">
+                            <i class="fas fa-broom"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Dirty Tables</h3>
+                            <div class="stat-number">3</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Orders Section -->
+                <div class="orders-section">
+                    <div class="section-header">
+                        <h2>Active Orders</h2>
+                        <div class="search-filter-container">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" placeholder="Search orders...">
+                            </div>
+                            <div class="filter-group">
+                                <div class="filter-item">
+                                    <select>
+                                        <option value="all">All Status</option>
+                                        <option value="pending">Pending Payment</option>
+                                        <option value="paid">Paid</option>
+                                        <option value="cooking">Cooking</option>
+                                        <option value="ready">Ready to Serve</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Table</th>
+                                    <th>Customer</th>
+                                    <th>Items</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>#ORD001</td>
+                                    <td>Table 1</td>
+                                    <td>John Doe</td>
+                                    <td>
+                                        <div class="order-items">
+                                            <span>2x Nasi Goreng</span>
+                                            <span>1x Es Teh</span>
+                                        </div>
+                                    </td>
+                                    <td>Rp 75.000</td>
+                                    <td><span class="status-badge pending">Pending Payment</span></td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn-primary">Mark Paid</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <!-- Add more order rows as needed -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    </div>
 
     <script src="assets/js/script.js"></script>
+    <script src="assets/js/modals.js"></script>
+    <script src="assets/js/completed.js"></script>
 </body>
 </html>

@@ -1,0 +1,144 @@
+<div class="completed-orders">
+    <!-- Header Section -->
+    <div class="section-header">
+        <h2>Completed Orders</h2>
+        <div class="search-filter-container">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search completed orders...">
+            </div>
+            <div class="filter-group">
+                <div class="filter-item">
+                    <select id="dateFilter">
+                        <option value="today">Today</option>
+                        <option value="yesterday">Yesterday</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                    </select>
+                </div>
+                <div class="date-range">
+                    <input type="date" class="date-input" placeholder="Start Date">
+                    <span>to</span>
+                    <input type="date" class="date-input" placeholder="End Date">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="completion-stats">
+        <div class="stat-card success">
+            <div class="stat-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-info">
+                <h3>Total Completed</h3>
+                <div class="stat-number">156</div>
+                <div class="stat-trend positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>12% vs yesterday</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card info">
+            <div class="stat-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-info">
+                <h3>Avg. Completion Time</h3>
+                <div class="stat-number">24m</div>
+                <div class="stat-trend negative">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>3m slower than avg</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card revenue">
+            <div class="stat-icon">
+                <i class="fas fa-wallet"></i>
+            </div>
+            <div class="stat-info">
+                <h3>Total Revenue</h3>
+                <div class="stat-number">Rp 8.5M</div>
+                <div class="stat-trend positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>15% vs yesterday</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Completed Orders Table -->
+    <div class="table-container">
+        <table class="orders-table">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Date & Time</th>
+                    <th>Table</th>
+                    <th>Items</th>
+                    <th>Total Amount</th>
+                    <th>Payment Method</th>
+                    <th>Completion Time</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>#ORD892</td>
+                    <td>
+                        <div class="order-datetime">
+                            <span class="date">Jan 15, 2024</span>
+                            <span class="time">14:30</span>
+                        </div>
+                    </td>
+                    <td>Table 5</td>
+                    <td>
+                        <div class="order-items">
+                            <span>3x Nasi Goreng Special</span>
+                            <span>2x Es Teh Manis</span>
+                            <span>1x Ayam Bakar</span>
+                            <button class="btn-view-more">+2 more</button>
+                        </div>
+                    </td>
+                    <td>Rp 225.000</td>
+                    <td>
+                        <span class="payment-method qris">
+                            <i class="fas fa-qrcode"></i> QRIS
+                        </span>
+                    </td>
+                    <td>
+                        <span class="completion-time">28 mins</span>
+                    </td>
+                    <td>
+                        <button class="btn-view-details">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
+                </tr>
+                <!-- More completed orders... -->
+            </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            <button class="btn-page" disabled>
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="btn-page active">1</button>
+            <button class="btn-page">2</button>
+            <button class="btn-page">3</button>
+            <span class="pagination-dots">...</span>
+            <button class="btn-page">12</button>
+            <button class="btn-page">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Di bagian bawah file, sebelum closing body tag -->
+<script src="assets/js/modals.js"></script>
+<script src="assets/js/completed.js"></script>
