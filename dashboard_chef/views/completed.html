@@ -1,0 +1,54 @@
+<div class="completed-orders">
+    <div class="section-header">
+        <h2>Completed Orders</h2>
+        <div class="filter-group">
+            <div class="filter-item">
+                <i class="fas fa-calendar"></i>
+                <select id="dateFilter">
+                    <option value="today">Today</option>
+                    <option value="yesterday">Yesterday</option>
+                    <option value="week">This Week</option>
+                    <option value="month">This Month</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <table class="orders-table">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Table No.</th>
+                    <th>Menu Item</th>
+                    <th>Qty</th>
+                    <th>Completion Time</th>
+                    <th>Duration</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>#ORD001</td>
+                    <td>12</td>
+                    <td>
+                        <div class="menu-item">
+                            <span class="item-name">Nasi Goreng Special</span>
+                            <span class="item-category">Main Course</span>
+                        </div>
+                    </td>
+                    <td>2</td>
+                    <td>
+                        <div class="order-time">
+                            <span class="time">10:45 AM</span>
+                            <span class="date">Today</span>
+                        </div>
+                    </td>
+                    <td>15 mins</td>
+                    <td><span class="status-badge completed">Completed</span></td>
+                </tr>
+                <!-- More completed orders... -->
+            </tbody>
+        </table>
+    </div>
+</div> 

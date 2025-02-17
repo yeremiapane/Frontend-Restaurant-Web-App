@@ -1,0 +1,298 @@
+
+
+<!-- Modify dashboard container structure -->
+<div class="dashboard-container">
+    <!-- Stats Section moved to top -->
+    <div class="stats-section">
+        <div class="order-stats">
+            <div class="stat-card">
+                <div class="stat-icon pending">
+                    <i class="fas fa-hourglass-start"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Pending Orders</h3>
+                    <p class="stat-number">12</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon cooking">
+                    <i class="fas fa-fire"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Cooking</h3>
+                    <p class="stat-number">5</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon completed">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Completed Today</h3>
+                    <p class="stat-number">45</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Orders Section -->
+    <div class="orders-section">
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <div class="header-title">
+                <h2>Kitchen Display System</h2>
+                <p class="subtitle">Active Orders Management</p>
+            </div>
+            <div class="header-actions">
+                <div class="filter-group">
+                    <div class="filter-item">
+                        <i class="fas fa-table"></i>
+                        <select id="tableFilter">
+                            <option value="">All Tables</option>
+                            <option value="1">Table 1</option>
+                            <option value="2">Table 2</option>
+                            <option value="3">Table 3</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <i class="fas fa-clock"></i>
+                        <select id="timeFilter">
+                            <option value="newest">Newest First</option>
+                            <option value="oldest">Oldest First</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Orders Table -->
+        <div class="orders-table-wrapper">
+            <div class="table-container">
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th>Table No.</th>
+                            <th>Order Time</th>
+                            <th>Menu Item</th>
+                            <th>Qty</th>
+                            <th>Special Notes</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Order 1 - Pending -->
+                        <tr>
+                            <td>
+                                <div class="table-number">12</div>
+                            </td>
+                            <td>
+                                <div class="order-time">
+                                    <span class="time">10:30 AM</span>
+                                    <span class="date">Today</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="menu-item">
+                                    <span class="item-name">Nasi Goreng Special</span>
+                                    <span class="item-category">Main Course</span>
+                                </div>
+                            </td>
+                            <td>2</td>
+                            <td>
+                                <div class="notes">
+                                    <span class="note-text">Extra Pedas</span>
+                                    <i class="fas fa-info-circle note-icon"></i>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="status-badge pending">Pending</span>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn-start" title="Start Cooking">
+                                        <i class="fas fa-play"></i>
+                                    </button>
+                                    <button class="btn-finish" disabled title="Finish">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    <button class="btn-pending" disabled title="Set Pending">
+                                        <i class="fas fa-pause"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Order 2 - In Progress -->
+                        <tr>
+                            <td>
+                                <div class="table-number">08</div>
+                            </td>
+                            <td>
+                                <div class="order-time">
+                                    <span class="time">10:25 AM</span>
+                                    <span class="date">Today</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="menu-item">
+                                    <span class="item-name">Mie Goreng Seafood</span>
+                                    <span class="item-category">Main Course</span>
+                                </div>
+                            </td>
+                            <td>1</td>
+                            <td>
+                                <div class="notes">
+                                    <span class="note-text">Tanpa Bawang</span>
+                                    <i class="fas fa-info-circle note-icon"></i>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="status-badge cooking">Cooking</span>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn-start" disabled title="Start Cooking">
+                                        <i class="fas fa-play"></i>
+                                    </button>
+                                    <button class="btn-finish" title="Finish">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    <button class="btn-pending" title="Set Pending">
+                                        <i class="fas fa-pause"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Order 3 - Pending -->
+                        <tr>
+                            <td>
+                                <div class="table-number">15</div>
+                            </td>
+                            <td>
+                                <div class="order-time">
+                                    <span class="time">10:35 AM</span>
+                                    <span class="date">Today</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="menu-item">
+                                    <span class="item-name">Ayam Bakar</span>
+                                    <span class="item-category">Main Course</span>
+                                </div>
+                            </td>
+                            <td>3</td>
+                            <td>
+                                <div class="notes">
+                                    <span class="note-text">Sambal Extra</span>
+                                    <i class="fas fa-info-circle note-icon"></i>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="status-badge pending">Pending</span>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn-start" title="Start Cooking">
+                                        <i class="fas fa-play"></i>
+                                    </button>
+                                    <button class="btn-finish" disabled title="Finish">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    <button class="btn-pending" disabled title="Set Pending">
+                                        <i class="fas fa-pause"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Order 4 - In Progress -->
+                        <tr>
+                            <td>
+                                <div class="table-number">03</div>
+                            </td>
+                            <td>
+                                <div class="order-time">
+                                    <span class="time">10:20 AM</span>
+                                    <span class="date">Today</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="menu-item">
+                                    <span class="item-name">Soto Ayam</span>
+                                    <span class="item-category">Soup</span>
+                                </div>
+                            </td>
+                            <td>2</td>
+                            <td>
+                                <div class="notes">
+                                    <span class="note-text">Extra Jeruk Nipis</span>
+                                    <i class="fas fa-info-circle note-icon"></i>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="status-badge cooking">Cooking</span>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn-start" disabled title="Start Cooking">
+                                        <i class="fas fa-play"></i>
+                                    </button>
+                                    <button class="btn-finish" title="Finish">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    <button class="btn-pending" title="Set Pending">
+                                        <i class="fas fa-pause"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Order 5 - Ready -->
+                        <tr>
+                            <td>
+                                <div class="table-number">06</div>
+                            </td>
+                            <td>
+                                <div class="order-time">
+                                    <span class="time">10:15 AM</span>
+                                    <span class="date">Today</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="menu-item">
+                                    <span class="item-name">Gado-gado</span>
+                                    <span class="item-category">Appetizer</span>
+                                </div>
+                            </td>
+                            <td>1</td>
+                            <td>
+                                <div class="notes">
+                                    <span class="note-text">Tanpa Kacang</span>
+                                    <i class="fas fa-info-circle note-icon"></i>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="status-badge completed">Ready</span>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn-start" disabled title="Start Cooking">
+                                        <i class="fas fa-play"></i>
+                                    </button>
+                                    <button class="btn-finish" disabled title="Finish">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    <button class="btn-pending" disabled title="Set Pending">
+                                        <i class="fas fa-pause"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div> 

@@ -102,17 +102,26 @@
 
             <div class="menu-table-container">
                 <div class="table-filters">
-                    <div class="search-container">
+                    <!-- Search Bar -->
+                    <div class="search-bar">
                         <i class="fas fa-search"></i>
                         <input type="text" placeholder="Search menu items...">
                     </div>
-                    <div class="category-filter">
-                        <select>
-                            <option value="">All Categories</option>
-                            <option value="main">Main Course</option>
-                            <option value="appetizer">Appetizer</option>
-                            <option value="dessert">Dessert</option>
-                            <option value="beverage">Beverage</option>
+
+                    <!-- Filters -->
+                    <div class="filter-group">
+                        <select id="categoryFilter" class="filter-select">
+                            <option value="all">All Categories</option>
+                            <option value="Main Course">Main Course</option>
+                            <option value="Beverage">Beverage</option>
+                            <option value="Appetizer">Appetizer</option>
+                            <option value="Dessert">Dessert</option>
+                        </select>
+
+                        <select id="statusFilter" class="filter-select">
+                            <option value="all">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
                         </select>
                     </div>
                 </div>

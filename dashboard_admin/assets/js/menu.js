@@ -1,14 +1,18 @@
 class MenuManager {
     constructor() {
         this.menuItems = [];
-        this.filteredItems = [];
+        this.currentFilters = {
+            category: 'all',
+            status: 'all',
+            search: ''
+        };
         this.init();
     }
 
     async init() {
         await this.fetchMenuItems();
         this.setupEventListeners();
-        this.renderMenuItems();
+        this.applyFilters();
     }
 
     async fetchMenuItems() {
@@ -20,7 +24,6 @@ class MenuManager {
                 category: "Main Course",
                 price: 35000,
                 status: "active",
-                image: "assets/img/menu/nasi-goreng.jpg",
                 description: "Nasi goreng dengan telur, ayam, dan sayuran"
             },
             {
@@ -29,87 +32,185 @@ class MenuManager {
                 category: "Beverage",
                 price: 8000,
                 status: "active",
-                image: "assets/img/menu/es-teh.jpg",
                 description: "Teh manis dengan es"
             },
-            // Tambahkan menu item lainnya di sini
+            {
+                id: 3,
+                name: "Sate Ayam",
+                category: "Main Course",
+                price: 25000,
+                status: "active",
+                description: "Sate ayam dengan bumbu kacang"
+            },
+            {
+                id: 4,
+                name: "Es Jeruk",
+                category: "Beverage",
+                price: 10000,
+                status: "inactive",
+                description: "Jeruk segar dengan es"
+            },
+            {
+                id: 5,
+                name: "Nasi Uduk",
+                category: "Main Course",
+                price: 15000,
+                status: "active",
+                description: "Nasi uduk dengan telur dan tempe"
+            }
         ];
-        this.filteredItems = [...this.menuItems];
     }
 
     setupEventListeners() {
-        // Search functionality
-        const searchInput = document.querySelector('.search-container input');
-        searchInput.addEventListener('input', (e) => this.handleSearch(e.target.value));
+        // Category Filter
+        const categoryFilter = document.getElementById('categoryFilter');
+        if (categoryFilter) {
+            categoryFilter.addEventListener('change', (e) => {
+                this.currentFilters.category = e.target.value;
+                this.applyFilters();
+            });
+        }
 
-        // Category filter
-        const categoryFilter = document.querySelector('.category-filter select');
-        categoryFilter.addEventListener('change', (e) => this.handleCategoryFilter(e.target.value));
+        // Status Filter
+        const statusFilter = document.getElementById('statusFilter');
+        if (statusFilter) {
+            statusFilter.addEventListener('change', (e) => {
+                this.currentFilters.status = e.target.value;
+                this.applyFilters();
+            });
+        }
+
+        // Search
+        const searchInput = document.querySelector('.search-bar input');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                this.currentFilters.search = e.target.value.toLowerCase();
+                this.applyFilters();
+            });
+        }
 
         // Add menu button
-        const addMenuBtn = document.getElementById('addMenuBtn');
-        addMenuBtn.addEventListener('click', () => this.showAddMenuModal());
+        document.getElementById('addMenuBtn')?.addEventListener('click', () => {
+            this.showAddMenuModal();
+        });
 
         // Action buttons delegation
-        document.querySelector('.menu-table tbody').addEventListener('click', (e) => {
-            const target = e.target.closest('button');
-            if (!target) return;
+        const menuTable = document.querySelector('.menu-table tbody');
+        if (menuTable) {
+            menuTable.addEventListener('click', (e) => {
+                const target = e.target.closest('button');
+                if (!target) return;
 
-            const row = target.closest('tr');
-            const menuId = row.dataset.id;
+                const row = target.closest('tr');
+                const menuId = parseInt(row.dataset.id);
 
-            if (target.classList.contains('btn-view')) {
-                this.handleViewMenu(menuId);
-            } else if (target.classList.contains('btn-edit')) {
-                this.handleEditMenu(menuId);
-            } else if (target.classList.contains('btn-delete')) {
-                this.handleDeleteMenu(menuId);
-            }
-        });
+                if (target.classList.contains('btn-view')) {
+                    this.handleViewMenu(menuId);
+                } else if (target.classList.contains('btn-edit')) {
+                    this.handleEditMenu(menuId);
+                } else if (target.classList.contains('btn-delete')) {
+                    this.handleDeleteMenu(menuId);
+                }
+            });
+        }
     }
 
-    renderMenuItems() {
+    applyFilters() {
+        let filteredItems = [...this.menuItems];
+
+        // Apply category filter
+        if (this.currentFilters.category !== 'all') {
+            filteredItems = filteredItems.filter(item => 
+                item.category === this.currentFilters.category
+            );
+        }
+
+        // Apply status filter
+        if (this.currentFilters.status !== 'all') {
+            filteredItems = filteredItems.filter(item => 
+                item.status === this.currentFilters.status
+            );
+        }
+
+        // Apply search filter
+        if (this.currentFilters.search) {
+            filteredItems = filteredItems.filter(item => 
+                item.name.toLowerCase().includes(this.currentFilters.search) ||
+                item.category.toLowerCase().includes(this.currentFilters.search) ||
+                item.description.toLowerCase().includes(this.currentFilters.search)
+            );
+        }
+
+        this.renderMenuItems(filteredItems);
+    }
+
+    renderMenuItems(items) {
         const tbody = document.querySelector('.menu-table tbody');
-        tbody.innerHTML = this.filteredItems.map(item => `
+        if (!tbody) {
+            console.error('Table body not found'); // Debug log
+            return;
+        }
+
+        console.log('Rendering items:', items.length); // Debug log
+
+        if (items.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="no-results">
+                        <div class="no-results-message">
+                            <i class="fas fa-search"></i>
+                            <p>No menu items found</p>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        tbody.innerHTML = items.map(item => `
             <tr data-id="${item.id}">
-                <td><img src="${item.image}" alt="${item.name}" class="menu-image"></td>
                 <td>${item.name}</td>
                 <td>${item.category}</td>
                 <td>Rp ${this.formatPrice(item.price)}</td>
-                <td><span class="menu-status status-${item.status}">${this.formatStatus(item.status)}</span></td>
+                <td><span class="status-badge ${item.status}">${this.formatStatus(item.status)}</span></td>
+                <td>${item.description || '-'}</td>
                 <td>
                     <div class="action-buttons">
-                        <button class="btn-view" title="View Details"><i class="fas fa-eye"></i></button>
-                        <button class="btn-edit" title="Edit Menu"><i class="fas fa-edit"></i></button>
-                        <button class="btn-delete" title="Delete Menu"><i class="fas fa-trash"></i></button>
+                        <button class="btn-view" title="View Details">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn-edit" title="Edit Menu">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-delete" title="Delete Menu">
+                            <i class="fas fa-trash"></i>
+                        </button>
                     </div>
                 </td>
             </tr>
         `).join('');
-    }
 
-    handleSearch(query) {
-        if (!query.trim()) {
-            this.filteredItems = [...this.menuItems];
-        } else {
-            query = query.toLowerCase();
-            this.filteredItems = this.menuItems.filter(item => 
-                item.name.toLowerCase().includes(query) ||
-                item.category.toLowerCase().includes(query)
-            );
-        }
-        this.renderMenuItems();
-    }
+        // Setup action buttons
+        tbody.querySelectorAll('.btn-view').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = parseInt(e.target.closest('tr').dataset.id);
+                this.handleViewMenu(id);
+            });
+        });
 
-    handleCategoryFilter(category) {
-        if (!category) {
-            this.filteredItems = [...this.menuItems];
-        } else {
-            this.filteredItems = this.menuItems.filter(item => 
-                item.category === category
-            );
-        }
-        this.renderMenuItems();
+        tbody.querySelectorAll('.btn-edit').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = parseInt(e.target.closest('tr').dataset.id);
+                this.handleEditMenu(id);
+            });
+        });
+
+        tbody.querySelectorAll('.btn-delete').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = parseInt(e.target.closest('tr').dataset.id);
+                this.handleDeleteMenu(id);
+            });
+        });
     }
 
     showAddMenuModal() {
@@ -177,31 +278,100 @@ class MenuManager {
     }
 
     setupModalEventListeners() {
-        const modal = document.getElementById('menuModal');
-        const closeButtons = modal.querySelectorAll('.close-modal');
-        const form = modal.querySelector('#menuForm');
+        const modal = document.querySelector('.modal');
+        if (!modal) return;
 
+        // Close button handler
+        const closeButtons = modal.querySelectorAll('.close-modal');
         closeButtons.forEach(button => {
             button.addEventListener('click', () => {
-                modal.remove();
+                modal.classList.remove('active');
+                setTimeout(() => modal.remove(), 300);
             });
         });
 
+        // Click outside modal handler
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
-                modal.remove();
+                modal.classList.remove('active');
+                setTimeout(() => modal.remove(), 300);
             }
         });
 
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.handleSaveMenu(form);
-        });
+        // Form submit handler
+        const form = modal.querySelector('form');
+        if (form) {
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                if (form.id === 'addMenuForm') {
+                    this.handleAddMenu(form);
+                } else if (form.id === 'editMenuForm') {
+                    this.handleEditMenu(form);
+                }
+            });
+        }
     }
 
-    async handleSaveMenu(form) {
-        // Get form data
-        const formData = {
+    handleEditMenu(menuId) {
+        const item = this.menuItems.find(item => item.id === parseInt(menuId));
+        if (!item) return;
+
+        const modalHTML = `
+            <div class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>Edit Menu Item</h2>
+                        <button type="button" class="close-modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editMenuForm" data-id="${item.id}">
+                            <div class="form-group">
+                                <label for="menuName">Menu Name</label>
+                                <input type="text" id="menuName" value="${item.name}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="menuCategory">Category</label>
+                                <select id="menuCategory" required>
+                                    <option value="Main Course" ${item.category === 'Main Course' ? 'selected' : ''}>Main Course</option>
+                                    <option value="Appetizer" ${item.category === 'Appetizer' ? 'selected' : ''}>Appetizer</option>
+                                    <option value="Dessert" ${item.category === 'Dessert' ? 'selected' : ''}>Dessert</option>
+                                    <option value="Beverage" ${item.category === 'Beverage' ? 'selected' : ''}>Beverage</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="menuPrice">Price</label>
+                                <input type="number" id="menuPrice" value="${item.price}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="menuStatus">Status</label>
+                                <select id="menuStatus" required>
+                                    <option value="active" ${item.status === 'active' ? 'selected' : ''}>Active</option>
+                                    <option value="inactive" ${item.status === 'inactive' ? 'selected' : ''}>Inactive</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="menuDescription">Description</label>
+                                <textarea id="menuDescription" required>${item.description || ''}</textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn-secondary close-modal">Cancel</button>
+                                <button type="submit" class="btn-primary">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        const modal = document.querySelector('.modal');
+        setTimeout(() => modal.classList.add('active'), 10);
+        this.setupModalEventListeners();
+    }
+
+    async handleAddMenu(form) {
+        const newItem = {
+            id: this.menuItems.length + 1,
             name: form.menuName.value,
             category: form.menuCategory.value,
             price: parseInt(form.menuPrice.value),
@@ -210,11 +380,40 @@ class MenuManager {
         };
 
         // Simulate API call
-        await this.saveMenu(formData);
+        await this.saveMenu(newItem);
         
-        // Close modal and refresh list
-        document.getElementById('menuModal').remove();
-        this.fetchMenuItems();
+        this.menuItems.push(newItem);
+        this.applyFilters();
+        
+        const modal = document.querySelector('.modal');
+        modal.classList.remove('active');
+        setTimeout(() => modal.remove(), 300);
+    }
+
+    async handleEditMenuSubmit(form) {
+        const itemId = parseInt(form.dataset.id);
+        const itemIndex = this.menuItems.findIndex(item => item.id === itemId);
+        
+        if (itemIndex === -1) return;
+
+        const updatedItem = {
+            ...this.menuItems[itemIndex],
+            name: form.menuName.value,
+            category: form.menuCategory.value,
+            price: parseInt(form.menuPrice.value),
+            status: form.menuStatus.value,
+            description: form.menuDescription.value
+        };
+
+        // Simulate API call
+        await this.saveMenu(updatedItem);
+        
+        this.menuItems[itemIndex] = updatedItem;
+        this.applyFilters();
+        
+        const modal = document.querySelector('.modal');
+        modal.classList.remove('active');
+        setTimeout(() => modal.remove(), 300);
     }
 
     async handleViewMenu(menuId) {
@@ -265,16 +464,17 @@ class MenuManager {
         this.setupModalEventListeners();
     }
 
-    handleEditMenu(menuId) {
-        // Implementasi edit menu
-        console.log('Edit menu:', menuId);
-    }
-
     async handleDeleteMenu(menuId) {
-        if (confirm('Are you sure you want to delete this menu item?')) {
+        const item = this.menuItems.find(item => item.id === parseInt(menuId));
+        if (!item) return;
+
+        if (confirm(`Are you sure you want to delete "${item.name}"?`)) {
             // Simulate API call
             await this.deleteMenu(menuId);
-            this.fetchMenuItems();
+            
+            const itemIndex = this.menuItems.findIndex(item => item.id === parseInt(menuId));
+            this.menuItems.splice(itemIndex, 1);
+            this.applyFilters();
         }
     }
 
@@ -298,5 +498,5 @@ class MenuManager {
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
-    new MenuManager();
+    window.menuManager = new MenuManager();
 }); 

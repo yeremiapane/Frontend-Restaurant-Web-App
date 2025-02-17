@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kitchen Display System</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body>
+    <div class="main-container">
+        <!-- Mobile Menu Toggle -->
+        <button class="mobile-menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <!-- Sidebar/Dropdown Menu -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>KDS System</h2>
+                <button class="close-menu" id="closeMenu">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <!-- Profile Section -->
+            <div class="profile-section">
+                <div class="profile-image">
+                    <img src="assets/images/chef-avatar.png" alt="Chef Profile">
+                </div>
+                <div class="profile-info">
+                    <h3>Chef John Doe</h3>
+                    <p>Master Chef</p>
+                </div>
+            </div>
+            
+            <ul class="sidebar-menu">
+                <li class="active">
+                    <a href="#" data-page="dashboard">
+                        <i class="fas fa-th-large"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-page="completed">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Order Complete</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-page="analytics">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Analytics</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Logout Button -->
+            <div class="logout-section">
+                <button class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Main Content -->
+        <main class="dashboard-container" id="mainContent">
+            <!-- Loading indicator -->
+            <div class="loading-indicator">
+                <i class="fas fa-spinner fa-spin"></i>
+                Loading...
+            </div>
+
+            <!-- Top Navigation -->
+            <nav class="top-nav">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search orders...">
+                </div>
+                <div class="nav-actions">
+                    <button class="notification-btn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </button>
+                </div>
+            </nav>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Content will be loaded dynamically here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/script.js"></script>
+</body>
+
+</html>
