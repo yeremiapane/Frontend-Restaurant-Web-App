@@ -4,8 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pemesanan Makanan Modern</title>
+  <!-- Font Awesome & Google Fonts -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- Styles -->
   <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
@@ -13,6 +15,7 @@
   <header>
     <div class="table-number">
       <span class="label">Meja</span>
+      <!-- Nomor Meja (diperbarui via JS) -->
       <span class="number">#08</span>
     </div>
     <div class="header-content">
@@ -28,18 +31,7 @@
         <i class="fas fa-chevron-left"></i>
       </button>
       <div class="categories-grid">
-        <div class="category-item active" data-category="makanan">
-          <i class="fas fa-utensils"></i>
-          <p>Makanan</p>
-        </div>
-        <div class="category-item" data-category="minuman">
-          <i class="fas fa-coffee"></i>
-          <p>Minuman</p>
-        </div>
-        <div class="category-item" data-category="snack">
-          <i class="fas fa-cookie"></i>
-          <p>Snack</p>
-        </div>
+        <!-- Kategori akan dibuat dinamis oleh JS -->
       </div>
       <button class="scroll-button scroll-right" type="button" aria-label="Scroll right">
         <i class="fas fa-chevron-right"></i>
@@ -72,8 +64,10 @@
         <button id="increase">+</button>
       </div>
       <div class="add-ons">
-        <label><input type="checkbox" name="addon" value="5000"> Add-on 1 (+Rp 5000)</label>
-        <label><input type="checkbox" name="addon" value="3000"> Add-on 2 (+Rp 3000)</label>
+        <!-- Add-ons akan di-generate dynamic jika Anda punya endpoint add-ons. 
+             Sementara contoh statis: -->
+        <label><input type="checkbox" name="addon" value="5000"> Sambal (+Rp 5000)</label>
+        <label><input type="checkbox" name="addon" value="3000"> Extra Sauce (+Rp 3000)</label>
       </div>
       <textarea placeholder="Catatan tambahan..."></textarea>
       <button class="add-to-cart">Masukkan ke Keranjang</button>
@@ -88,15 +82,13 @@
     </div>
     <div class="cart-content">
       <h2>Keranjang Belanja <span class="close-cart">&times;</span></h2>
-      <div class="cart-items">
-        <!-- Item akan ditambahkan secara dinamis -->
-      </div>
+      <div class="cart-items"></div>
       <p class="cart-total">Total: Rp <span id="total">0</span></p>
       <button class="checkout">Bayar</button>
     </div>
   </div>
 
-  <!-- Tambahkan ini di akhir body sebelum script -->
+  <!-- Modal Konfirmasi -->
   <div id="confirmationModal" class="confirmation-modal">
     <div class="confirmation-content">
       <h3 class="confirm-title">Konfirmasi</h3>
@@ -153,6 +145,7 @@
     </div>
   </div>
 
+  <!-- Script -->
   <script src="assets/js/script.js"></script>
 </body>
 </html>
