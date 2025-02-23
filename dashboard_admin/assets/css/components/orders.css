@@ -1,0 +1,322 @@
+/* Orders Page Styles */
+.orders-content {
+    padding: var(--spacing-lg);
+}
+
+.page-header {
+    background: var(--surface);
+    border-radius: 12px;
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Orders Filter */
+.orders-filter {
+    background: var(--surface);
+    border-radius: 12px;
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    flex: 1;
+}
+
+.search-box {
+    position: relative;
+    flex: 1;
+    max-width: 300px;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 10px 16px 10px 40px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.search-box i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-light);
+}
+
+.filter-buttons {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.filter-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+/* Orders Table */
+.orders-table-container {
+    background: var(--surface);
+    border-radius: 12px;
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: var(--spacing-lg);
+}
+
+.orders-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.orders-table th {
+    background: rgba(0, 0, 0, 0.02);
+    padding: var(--spacing-md);
+    font-weight: 500;
+    text-align: left;
+    color: var(--text-light);
+}
+
+.orders-table td {
+    padding: var(--spacing-md);
+    border-top: 1px solid var(--border);
+}
+
+.order-id {
+    font-weight: 500;
+    color: var(--primary);
+}
+
+.customer-info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.customer-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.customer-details .name {
+    font-weight: 500;
+}
+
+.customer-details .table {
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
+
+.order-items {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.order-time {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.order-time .date {
+    font-weight: 500;
+}
+
+.order-time .time {
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .orders-content {
+        padding: var(--spacing-md);
+    }
+
+    .filter-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-box {
+        max-width: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        gap: var(--spacing-md);
+        align-items: flex-start;
+    }
+
+    .orders-filter {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-buttons {
+        overflow-x: auto;
+        padding-bottom: var(--spacing-xs);
+    }
+
+    .filter-actions {
+        justify-content: flex-end;
+    }
+
+    .orders-table thead {
+        display: none;
+    }
+
+    .orders-table tbody tr {
+        display: block;
+        padding: var(--spacing-md);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .orders-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--spacing-xs) 0;
+        border: none;
+    }
+
+    .orders-table td::before {
+        content: attr(data-label);
+        font-weight: 500;
+        color: var(--text-light);
+    }
+
+    .customer-info {
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 480px) {
+    .filter-actions {
+        flex-wrap: wrap;
+        justify-content: stretch;
+    }
+
+    .filter-actions .btn {
+        flex: 1;
+    }
+}
+
+/* Order Items List */
+.order-items-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    max-width: 300px;
+}
+
+.item-chip {
+    background: rgba(37, 99, 235, 0.1);
+    padding: 4px 8px;
+    border-radius: 16px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.item-name {
+    color: var(--text);
+}
+
+.item-qty {
+    color: var(--primary);
+    font-weight: 500;
+}
+
+/* Status Badges */
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.status-badge::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.status-badge.pending {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--warning);
+}
+
+.status-badge.in-progress {
+    background: rgba(37, 99, 235, 0.1);
+    color: var(--primary);
+}
+
+.status-badge.completed {
+    background: rgba(34, 197, 94, 0.1);
+    color: var(--success);
+}
+
+.status-badge.occupied {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger);
+}
+
+/* Date Range Filter */
+.date-range {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.date-range input {
+    width: 130px;
+}
+
+/* Search Functionality */
+.search-box {
+    position: relative;
+    width: 300px;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 8px 12px 8px 36px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.search-box i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-light);
+} 

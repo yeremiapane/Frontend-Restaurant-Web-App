@@ -1,0 +1,272 @@
+/* Tables Content */
+.tables-content {
+    padding: 1.5rem;
+}
+
+/* Tables Filter */
+.tables-filter {
+    background: var(--background);
+    padding: 1rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.filter-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.status-filter {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.status-filter .btn {
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.status-filter .btn i {
+    font-size: 1rem;
+}
+
+/* Tables Grid */
+.tables-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    padding: 0.5rem;
+}
+
+/* Table Card */
+.table-card {
+    background: var(--background);
+    border-radius: 16px;
+    padding: 1.5rem;
+    position: relative;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.table-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    border-radius: 16px 16px 0 0;
+}
+
+.table-card.available::before {
+    background: linear-gradient(to right, var(--success), #34d399);
+}
+
+.table-card.occupied::before {
+    background: linear-gradient(to right, var(--warning), #fbbf24);
+}
+
+.table-card.dirty::before {
+    background: linear-gradient(to right, var(--danger), #f87171);
+}
+
+.table-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+/* Table Header */
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.table-id {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-light);
+    background: var(--background-alt);
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+}
+
+/* Table Content */
+.table-content {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.table-icon {
+    width: 64px;
+    height: 64px;
+    background: var(--background-alt);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: var(--text);
+    transition: all 0.3s ease;
+}
+
+.available .table-icon {
+    color: var(--success);
+}
+
+.occupied .table-icon {
+    color: var(--warning);
+}
+
+.dirty .table-icon {
+    color: var(--danger);
+}
+
+.table-info {
+    flex: 1;
+}
+
+.table-info h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: var(--text);
+}
+
+/* Table Status */
+.table-status {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.status-badge i {
+    font-size: 0.75rem;
+}
+
+/* Table Footer */
+.table-footer {
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+}
+
+.table-stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.stat-label {
+    color: var(--text-light);
+}
+
+.stat-value {
+    font-weight: 500;
+    color: var(--text);
+}
+
+/* Quick Actions */
+.quick-actions {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.table-card:hover .quick-actions {
+    opacity: 1;
+}
+
+.quick-actions .btn {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: var(--background-alt);
+    color: var(--text);
+}
+
+/* Current Order Info */
+.current-order {
+    background: var(--background-alt);
+    padding: 0.75rem;
+    border-radius: 8px;
+    margin-top: 0.5rem;
+}
+
+.current-order h4 {
+    margin: 0 0 0.5rem;
+    font-size: 0.875rem;
+    color: var(--text-light);
+}
+
+.order-details {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .tables-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .status-filter {
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+    }
+
+    .status-filter::-webkit-scrollbar {
+        height: 4px;
+    }
+
+    .table-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .table-icon {
+        margin: 0 auto;
+    }
+} 

@@ -1,0 +1,244 @@
+.sidebar {
+    width: 260px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    background: var(--surface);
+    padding: 0;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    transition: all var(--transition-speed);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-header {
+    padding: var(--spacing-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    border-bottom: 1px solid var(--border);
+}
+
+.logo {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.sidebar-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.close-sidebar {
+    display: none;
+    margin-left: auto;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-light);
+    padding: var(--spacing-xs);
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.close-sidebar:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.nav-links {
+    padding: var(--spacing-md);
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.nav-item {
+    margin-bottom: var(--spacing-xs);
+    border-radius: 8px;
+    transition: all var(--transition-speed);
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-item a {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem var(--spacing-md);
+    color: var(--text);
+    text-decoration: none;
+    gap: var(--spacing-md);
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s ease;
+}
+
+.nav-item i {
+    width: 20px;
+    text-align: center;
+    font-size: 1.1rem;
+}
+
+.nav-item span {
+    font-size: 0.95rem;
+}
+
+.nav-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--primary);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.nav-item:hover::before {
+    opacity: 0.1;
+}
+
+.nav-item.active::before {
+    opacity: 1;
+}
+
+.nav-item:hover:not(.active) {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.nav-item.active {
+    background: var(--primary);
+}
+
+.nav-item.active a {
+    color: white;
+}
+
+.nav-item.active i {
+    color: white;
+}
+
+.nav-item.logout {
+    margin-top: auto;
+    border-top: 1px solid var(--border);
+    padding-top: var(--spacing-md);
+}
+
+.nav-item.logout a {
+    color: var(--danger);
+}
+
+.nav-item.logout:hover::before {
+    background: var(--danger);
+}
+
+/* Custom Scrollbar for nav-links */
+.nav-links::-webkit-scrollbar {
+    width: 4px;
+}
+
+.nav-links::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.nav-links::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 4px;
+}
+
+.nav-links::-webkit-scrollbar-thumb:hover {
+    background: var(--text-light);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .sidebar {
+        transform: translateX(-100%);
+        width: 280px;
+    }
+    
+    .sidebar.active {
+        transform: translateX(0);
+    }
+    
+    .close-sidebar {
+        display: block;
+    }
+
+    .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        z-index: 999;
+        backdrop-filter: blur(2px);
+        -webkit-backdrop-filter: blur(2px);
+    }
+
+    .sidebar-overlay.active {
+        display: block;
+    }
+
+    .nav-item a {
+        padding: 1rem var(--spacing-md);
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 85%;
+        max-width: 320px;
+    }
+
+    .nav-item {
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .nav-item a {
+        padding: 0.875rem var(--spacing-md);
+    }
+
+    .sidebar-header {
+        padding: var(--spacing-md);
+    }
+}
+
+/* Animation */
+.sidebar.active {
+    animation: slideIn 0.3s ease forwards;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Hover Effects */
+.nav-item {
+    transform: translateX(0);
+    transition: transform 0.3s ease;
+}
+
+.nav-item:hover {
+    transform: translateX(4px);
+}
+
+.nav-item.active:hover {
+    transform: none;
+} 
