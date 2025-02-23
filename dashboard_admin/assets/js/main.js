@@ -1458,4 +1458,30 @@ class Navigation {
 document.addEventListener('DOMContentLoaded', () => {
     new Navigation();
     new MenuGallery();
-}); 
+});
+
+// Saat membuat row untuk orders table
+function createOrderRow(order) {
+    return `
+        <tr>
+            <td data-label="Order ID">#${order.id}</td>
+            <td data-label="Customer">
+                <div class="customer-info">
+                    <!-- customer info content -->
+                </div>
+            </td>
+            <td data-label="Table">${order.table}</td>
+            <td data-label="Items">${order.items}</td>
+            <td data-label="Total">${order.total}</td>
+            <td data-label="Status">
+                <span class="status-badge status-${order.status.toLowerCase()}">${order.status}</span>
+            </td>
+            <td data-label="Time">${order.time}</td>
+            <td data-label="Actions">
+                <div class="action-buttons">
+                    <!-- action buttons -->
+                </div>
+            </td>
+        </tr>
+    `;
+} 
