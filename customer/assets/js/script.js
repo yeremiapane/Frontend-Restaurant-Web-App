@@ -44,12 +44,16 @@ async function fetchCategories() {
 // Ambil daftar menu berdasar kategori: GET /menus?category=name
 async function fetchMenusByCategory(categoryName) {
   try {
-    // Ubah parameter dari 'by-category' menjadi 'category'
+    // Ubah URL sesuai dengan endpoint backend
     const res = await fetch(`${BASE_URL}/menus/by-category?category=${encodeURIComponent(categoryName)}`);
     if (!res.ok) throw new Error('Network response was not ok');
     const data = await res.json();
-    console.log('Fetched menus for', categoryName, ':', data.data);
-    return data.data; // Pastikan respons backend memiliki properti 'data'
+    
+    // Pastikan data sesuai dengan struktur response backend
+    if (data.status === "success" && Array.isArray(data.data)) {
+      return data.data;
+    }
+    return [];
   } catch (err) {
     console.error("fetchMenusByCategory error:", err);
     return [];
@@ -98,14 +102,25 @@ async function showCategories() {
   const categoriesGrid = document.querySelector(".categories-grid");
   if (!categoriesGrid) return;
 
-  categoriesGrid.innerHTML = "";
+  categoriesGrid.innerHTML = `
+    <div class="category-loading">
+      <i class="fas fa-spinner fa-spin"></i>
+    </div>
+  `;
+
   const categories = await fetchCategories(); 
 
   if (!Array.isArray(categories) || categories.length === 0) {
-    console.warn("No categories data from server.");
+    categoriesGrid.innerHTML = `
+      <div class="category-error">
+        <i class="fas fa-exclamation-circle"></i>
+        <p>Tidak ada kategori tersedia</p>
+      </div>
+    `;
     return;
   }
 
+  categoriesGrid.innerHTML = "";
   categories.forEach((cat, idx) => {
     console.log(cat)
     const catDiv = document.createElement("div");
@@ -142,23 +157,32 @@ async function showCategories() {
 // Tampilkan Daftar Menu Berdasarkan Kategori
 // --------------------------------------------------------------------------
 async function showMenu(categoryName) {
-  console.log("Fetching menu for category:", categoryName);
   const menuGrid = document.querySelector(".menu-grid");
   if (!menuGrid) {
     console.error("Menu grid element not found!");
     return;
   }
-  menuGrid.innerHTML = "";
+  menuGrid.innerHTML = `
+    <div class="menu-loading">
+      <i class="fas fa-spinner fa-spin"></i>
+      <p>Memuat menu...</p>
+    </div>
+  `;
 
   const menuList = await fetchMenusByCategory(categoryName);
   // Ex: menuList = [{id, name, price, image_url, description}, ...]
 
   if (!Array.isArray(menuList) || menuList.length === 0) {
-    // Optionally show message
-    menuGrid.innerHTML = "<p class='no-menu'>Menu tidak tersedia untuk kategori ini</p>";
+    menuGrid.innerHTML = `
+      <div class="menu-error">
+        <i class="fas fa-utensils"></i>
+        <p>Tidak ada menu dalam kategori ini</p>
+      </div>
+    `;
     return;
   }
 
+  menuGrid.innerHTML = "";
   menuList.forEach((item) => {
     const menuItem = document.createElement("div");
     menuItem.classList.add("menu-item");
@@ -530,29 +554,29 @@ async function handleCheckout() {
     return;
   }
 
-  // 1. payload: { table_id, items: [{menu_id, quantity, notes}, ...] }
-  const itemsPayload = cart.map(ci => ({
-    menu_id: ci.menuId,
-    quantity: ci.quantity,
-    notes: ci.notes || "",
-    // addOns -> opsional
-  }));
-
+  // 1. Buat payload order
   const orderPayload = {
     table_id: parseInt(tableId, 10),
-    items: itemsPayload
+    items: cart.map(item => ({
+      menu_id: item.menuId,
+      quantity: item.quantity,
+      notes: item.notes || "",
+      // Tambahkan add-ons jika ada
+      add_ons: item.addOns || []
+    }))
   };
 
-  // 2. POST /orders
+  // 2. Buat order
   const orderRes = await createOrderInBackend(orderPayload);
   if (!orderRes || !orderRes.data) {
-    showNotification('Gagal membuat order', 'warning');
+    showNotification('Gagal membuat pesanan', 'error');
     return;
   }
 
-  const newOrderId = orderRes.data.id; 
-  // Tampilkan modal payment
-  showPaymentModal(newOrderId);
+  const orderId = orderRes.data.id;
+
+  // 3. Tampilkan modal pembayaran
+  showPaymentModal(orderId);
 }
 
 // --------------------------------------------------------------------------
@@ -575,7 +599,7 @@ function showPaymentModal(orderId) {
 
   cashBtn.onclick = async () => {
     modal.classList.remove('show');
-    await payOrderCash(orderId);
+    await handleCashPayment(orderId);
   };
   qrisBtn.onclick = async () => {
     showNotification('Pembayaran QRIS belum tersedia', 'warning');
@@ -585,23 +609,29 @@ function showPaymentModal(orderId) {
   };
 }
 
-async function payOrderCash(orderId) {
-  // POST /payments => {order_id, payment_method:'cash', amount: total}
+// Fungsi untuk menangani pembayaran tunai
+async function handleCashPayment(orderId) {
   const paymentPayload = {
     order_id: orderId,
     payment_method: 'cash',
     amount: total
   };
+
   const paymentRes = await createPaymentInBackend(paymentPayload);
   if (!paymentRes || !paymentRes.data) {
-    showNotification('Gagal memproses pembayaran', 'warning');
+    showNotification('Gagal memproses pembayaran', 'error');
     return;
   }
-  // Tampilkan modal kasir
-  showCashPaymentModal();
+
+  // Tampilkan modal konfirmasi pembayaran tunai
+  showCashPaymentModal(paymentRes.data);
+  
+  // Reset cart
+  cart = [];
+  updateCart();
 }
 
-function showCashPaymentModal() {
+function showCashPaymentModal(data) {
   const modal = document.getElementById('cashPaymentModal');
   modal.classList.add('show');
 
@@ -624,22 +654,124 @@ function showCashPaymentModal() {
 }
 
 // --------------------------------------------------------------------------
-// DOM Loaded
+// Fungsi untuk scan meja dan membuat sesi
 // --------------------------------------------------------------------------
-document.addEventListener('DOMContentLoaded', () => {
-  console.log('DOM fully loaded');
+async function scanTable(tableId) {
+  try {
+    const res = await fetch(`${BASE_URL}/customers/scan/${tableId}`, {
+      method: 'POST'
+    });
+    
+    if (!res.ok) throw new Error('Failed to scan table');
+    const data = await res.json();
+    
+    // Simpan session key jika ada
+    if (data.data?.session_key) {
+      localStorage.setItem('sessionKey', data.data.session_key);
+    }
+    
+    return data.data;
+  } catch (err) {
+    console.error('scanTable error:', err);
+    return null;
+  }
+}
 
-  // Tampilkan nomor meja
-  const tableNumEl = document.querySelector(".table-number .number");
-  if (tableNumEl) tableNumEl.textContent = `#${tableId}`;
+// --------------------------------------------------------------------------
+// Fungsi untuk cek sesi aktif
+// --------------------------------------------------------------------------
+async function checkActiveSession(tableId) {
+  try {
+    const res = await fetch(`${BASE_URL}/customers/session/${tableId}`);
+    const data = await res.json();
+    return data.data; // null jika tidak ada sesi aktif
+  } catch (err) {
+    console.error('checkActiveSession error:', err);
+    return null;
+  }
+}
 
-  // Tampilkan kategori & menu
-  showCategories();
+// --------------------------------------------------------------------------
+// Inisialisasi WebSocket
+// --------------------------------------------------------------------------
+let ws;
 
-  // Inisialisasi event listeners
-  initializeEventListeners();
-});
+function initWebSocket() {
+  ws = new WebSocket(`ws://localhost:8080/ws/customer`);
+  
+  ws.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    
+    switch(data.event) {
+      case 'order_status':
+        handleOrderStatusUpdate(data.data);
+        break;
+      case 'payment_status':
+        handlePaymentStatusUpdate(data.data);
+        break;
+    }
+  };
 
+  ws.onclose = () => {
+    // Reconnect setelah 5 detik
+    setTimeout(initWebSocket, 5000);
+  };
+}
+
+// Fungsi untuk handle update status
+function handleOrderStatusUpdate(data) {
+  if (data.status === 'ready') {
+    showNotification('Pesanan Anda siap!', 'success');
+  }
+}
+
+function handlePaymentStatusUpdate(data) {
+  if (data.status === 'success') {
+    showNotification('Pembayaran berhasil!', 'success');
+    // Redirect ke halaman terima kasih atau reset aplikasi
+    resetApp();
+  }
+}
+
+// --------------------------------------------------------------------------
+// Inisialisasi aplikasi
+// --------------------------------------------------------------------------
+async function initApp() {
+  showLoading();
+  try {
+    // 1. Ambil table_id dari URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const tableId = urlParams.get('table_id');
+    
+    if (!tableId) {
+      throw new Error('Meja tidak valid');
+    }
+
+    // 2. Cek sesi aktif
+    const session = await checkActiveSession(tableId);
+    if (!session) {
+      // Scan meja jika belum ada sesi
+      const scanResult = await scanTable(tableId);
+      if (!scanResult) {
+        throw new Error('Gagal memulai sesi');
+      }
+    }
+
+    // 3. Load kategori dan menu
+    await showCategories();
+    
+    // 4. Inisialisasi WebSocket
+    initWebSocket();
+
+  } catch (error) {
+    showNotification(error.message, 'error');
+  } finally {
+    hideLoading();
+  }
+}
+
+// Panggil saat DOM ready
+document.addEventListener('DOMContentLoaded', initApp);
 
 // Debug logs
 console.log('Script loaded');
@@ -811,3 +943,112 @@ cartStyle.textContent = `
   }
 `;
 document.head.appendChild(cartStyle);
+
+// Tambahkan fungsi untuk mengelola loading state
+function showLoading() {
+  const loadingOverlay = document.createElement('div');
+  loadingOverlay.className = 'loading-overlay';
+  loadingOverlay.innerHTML = `
+    <div class="loading-spinner">
+      <i class="fas fa-spinner fa-spin"></i>
+      <p>Memuat...</p>
+    </div>
+  `;
+  document.body.appendChild(loadingOverlay);
+}
+
+function hideLoading() {
+  const loadingOverlay = document.querySelector('.loading-overlay');
+  if (loadingOverlay) {
+    loadingOverlay.remove();
+  }
+}
+
+// Tambahkan style untuk loading overlay
+const loadingStyle = document.createElement('style');
+loadingStyle.textContent = `
+  .loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    backdrop-filter: blur(5px);
+  }
+
+  .loading-spinner {
+    text-align: center;
+    color: #009FFD;
+  }
+
+  .loading-spinner i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  .loading-spinner p {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    color: #333;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .loading-overlay {
+    animation: fadeIn 0.3s ease;
+  }
+`;
+document.head.appendChild(loadingStyle);
+
+// Tambahkan style untuk loading states
+const menuLoadingStyle = document.createElement('style');
+menuLoadingStyle.textContent = `
+  .category-loading,
+  .menu-loading,
+  .category-error,
+  .menu-error {
+    width: 100%;
+    padding: 2rem;
+    text-align: center;
+    color: #009FFD;
+  }
+
+  .category-error,
+  .menu-error {
+    color: #666;
+  }
+
+  .category-loading i,
+  .menu-loading i {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .category-error i,
+  .menu-error i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+  }
+
+  .menu-error p,
+  .category-error p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #666;
+  }
+
+  .menu-grid {
+    min-height: 200px;
+  }
+`;
+document.head.appendChild(menuLoadingStyle);
