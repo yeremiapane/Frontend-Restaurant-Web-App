@@ -1,11 +1,25 @@
+import { api } from '../utils/api.js';
+
 export class OrderSearch {
     constructor() {
         this.searchInput = document.getElementById('orderSearch');
-        this.orders = []; // Will be populated with order data
-        this.searchIndex = new Map(); // For faster search
+        this.orders = [];
+        this.searchIndex = new Map();
         this.debounceTimeout = null;
         
         this.initializeSearch();
+        this.loadOrders();
+    }
+
+    async loadOrders() {
+        try {
+            const response = await api.getOrders();
+            this.orders = response.data;
+            this.buildSearchIndex(this.orders);
+            this.displayOrders(this.orders);
+        } catch (error) {
+            console.error('Error loading orders:', error);
+        }
     }
 
     initializeSearch() {
@@ -61,13 +75,34 @@ export class OrderSearch {
     }
 
     createOrderRow(order) {
-        // Create HTML for order row
         return `
             <tr>
-                <td data-label="Order ID">
-                    <span class="order-id">${order.id}</span>
+                <td data-label="Order ID">#${order.id}</td>
+                <td data-label="Customer">
+                    <div class="customer-info">
+                        <span>${order.customer_name}</span>
+                        <small>${order.customer_email}</small>
+                    </div>
                 </td>
-                <!-- ... other cells ... -->
+                <td data-label="Table">${order.table_number}</td>
+                <td data-label="Items">${order.items.length} items</td>
+                <td data-label="Total">Rp ${order.total.toLocaleString()}</td>
+                <td data-label="Status">
+                    <span class="status-badge status-${order.status.toLowerCase()}">
+                        ${order.status}
+                    </span>
+                </td>
+                <td data-label="Time">${new Date(order.created_at).toLocaleString()}</td>
+                <td data-label="Actions">
+                    <div class="action-buttons">
+                        <button onclick="viewOrder(${order.id})">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button onclick="updateOrder(${order.id})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </div>
+                </td>
             </tr>
         `;
     }

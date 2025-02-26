@@ -1,23 +1,30 @@
+import { api } from '../utils/api.js';
+
 export class ReportCharts {
     constructor() {
         this.initializeCharts();
     }
 
-    initializeCharts() {
-        this.initRevenueTrendChart();
-        this.initCategoryChart();
-        this.initPeakHoursChart();
+    async initializeCharts() {
+        try {
+            const stats = await api.getDashboardStats();
+            this.initRevenueTrendChart(stats.revenue_trend);
+            this.initCategoryChart(stats.category_sales);
+            this.initPeakHoursChart(stats.peak_hours);
+        } catch (error) {
+            console.error('Error loading charts:', error);
+        }
     }
 
-    initRevenueTrendChart() {
+    initRevenueTrendChart(data) {
         const ctx = document.getElementById('revenueTrendChart').getContext('2d');
         new Chart(ctx, {
             type: 'line',
             data: {
-                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                labels: data.map(item => item.date),
                 datasets: [{
                     label: 'Revenue',
-                    data: [1200000, 1500000, 1300000, 1800000, 2000000, 2500000, 2200000],
+                    data: data.map(item => item.amount),
                     borderColor: '#2563eb',
                     backgroundColor: 'rgba(37, 99, 235, 0.1)',
                     tension: 0.4,
@@ -44,14 +51,14 @@ export class ReportCharts {
         });
     }
 
-    initCategoryChart() {
+    initCategoryChart(data) {
         const ctx = document.getElementById('categoryChart').getContext('2d');
         new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: ['Main Course', 'Beverages', 'Desserts', 'Appetizers'],
+                labels: data.map(item => item.category),
                 datasets: [{
-                    data: [40, 25, 20, 15],
+                    data: data.map(item => item.sales),
                     backgroundColor: [
                         '#2563eb',
                         '#22c55e',
@@ -72,15 +79,15 @@ export class ReportCharts {
         });
     }
 
-    initPeakHoursChart() {
+    initPeakHoursChart(data) {
         const ctx = document.getElementById('peakHoursChart').getContext('2d');
         new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: ['10:00', '12:00', '14:00', '16:00', '18:00', '20:00'],
+                labels: data.map(item => item.hour),
                 datasets: [{
                     label: 'Orders',
-                    data: [15, 30, 25, 18, 35, 28],
+                    data: data.map(item => item.order_count),
                     backgroundColor: '#2563eb'
                 }]
             },

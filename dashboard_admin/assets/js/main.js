@@ -1,6 +1,8 @@
+import { api } from './utils/api.js';
 import { MenuGallery } from './components/menuGallery.js';
 import { ReportCharts } from './components/reportCharts.js';
 import { ProfileManager } from './components/profile.js';
+import { OrderSearch } from './components/orderSearch.js';
 
 // Navigation Handler
 class Navigation {
@@ -169,221 +171,234 @@ class Navigation {
 
     async loadPageContent(page) {
         const pages = {
-            dashboard: `
-                <div class="dashboard-content animate__animated animate__fadeIn">
-                    <div class="dashboard-header">
-                        <div class="header-left">
-                            <h1><i class="fas fa-chart-line"></i> Dashboard Overview</h1>
-                            <p class="header-subtitle">Welcome back, Admin!</p>
-                        </div>
-                        <div class="header-right">
-                            <div class="date-filter">
-                                <button class="btn btn-outline active">Today</button>
-                                <button class="btn btn-outline">Week</button>
-                                <button class="btn btn-outline">Month</button>
-                                <button class="btn btn-outline">
-                                    <i class="fas fa-calendar"></i>
-                                    Custom
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+            dashboard: async () => {
+                try {
+                    // Ambil data dari backend
+                    const dashboardStats = await api.get('/admin/dashboard/stats');
+                    const orderFlow = await api.get('/admin/orders/flow');
+                    const orderAnalytics = await api.get('/admin/orders/analytics');
 
-                    <!-- Quick Stats -->
-                    <div class="stats-container">
-                        <div class="stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.1s">
-                            <div class="stat-header">
-                                <div class="icon revenue">
-                                    <i class="fas fa-dollar-sign"></i>
+                    return `
+                        <div class="dashboard-content animate__animated animate__fadeIn">
+                            <div class="dashboard-header">
+                                <div class="header-left">
+                                    <h1><i class="fas fa-chart-line"></i> Dashboard Overview</h1>
+                                    <p class="header-subtitle">Welcome back, Admin!</p>
                                 </div>
-                                <div class="stat-menu">
-                                    <button class="btn btn-icon">
-                                        <i class="fas fa-ellipsis-v"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="stat-info">
-                                <p>Total Revenue</p>
-                                <h3>Rp 8,459,000</h3>
-                                <div class="stat-footer">
-                                    <span class="trend positive">
-                                        <i class="fas fa-arrow-up"></i>
-                                        23.5%
-                                    </span>
-                                    <span class="period">vs last month</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
-                            <div class="stat-header">
-                                <div class="icon orders">
-                                    <i class="fas fa-shopping-bag"></i>
-                                </div>
-                                <div class="stat-menu">
-                                    <button class="btn btn-icon">
-                                        <i class="fas fa-ellipsis-v"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="stat-info">
-                                <p>Total Orders</p>
-                                <h3>246</h3>
-                                <div class="stat-footer">
-                                    <span class="trend positive">
-                                        <i class="fas fa-arrow-up"></i>
-                                        12.3%
-                                    </span>
-                                    <span class="period">vs last month</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.3s">
-                            <div class="stat-header">
-                                <div class="icon customers">
-                                    <i class="fas fa-users"></i>
-                                </div>
-                                <div class="stat-menu">
-                                    <button class="btn btn-icon">
-                                        <i class="fas fa-ellipsis-v"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="stat-info">
-                                <p>Total Customers</p>
-                                <h3>128</h3>
-                                <div class="stat-footer">
-                                    <span class="trend negative">
-                                        <i class="fas fa-arrow-down"></i>
-                                        2.8%
-                                    </span>
-                                    <span class="period">vs last month</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.4s">
-                            <div class="stat-header">
-                                <div class="icon tables">
-                                    <i class="fas fa-chair"></i>
-                                </div>
-                                <div class="stat-menu">
-                                    <button class="btn btn-icon">
-                                        <i class="fas fa-ellipsis-v"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="stat-info">
-                                <p>Active Tables</p>
-                                <h3>18/24</h3>
-                                <div class="stat-footer">
-                                    <div class="progress-bar">
-                                        <div class="progress" style="width: 75%"></div>
-                                    </div>
-                                    <span class="period">75% Occupied</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Charts Section -->
-                    <div class="charts-container">
-                        <div class="chart-card animate__animated animate__fadeInUp" style="animation-delay: 0.5s">
-                            <div class="chart-header">
-                                <div class="chart-title">
-                                    <h3>Revenue Overview</h3>
-                                    <p>Monthly revenue statistics</p>
-                                </div>
-                                <div class="chart-actions">
-                                    <div class="btn-group">
-                                        <button class="btn btn-sm btn-outline">Weekly</button>
-                                        <button class="btn btn-sm btn-outline active">Monthly</button>
-                                        <button class="btn btn-sm btn-outline">Yearly</button>
+                                <div class="header-right">
+                                    <div class="date-filter">
+                                        <button class="btn btn-outline active">Today</button>
+                                        <button class="btn btn-outline">Week</button>
+                                        <button class="btn btn-outline">Month</button>
+                                        <button class="btn btn-outline">
+                                            <i class="fas fa-calendar"></i>
+                                            Custom
+                                        </button>
                                     </div>
                                 </div>
                             </div>
-                            <div class="chart-body">
-                                <canvas id="revenueChart"></canvas>
-                            </div>
-                        </div>
 
-                        <div class="chart-card animate__animated animate__fadeInUp" style="animation-delay: 0.6s">
-                            <div class="chart-header">
-                                <div class="chart-title">
-                                    <h3>Popular Items</h3>
-                                    <p>Top selling menu items</p>
+                            <!-- Quick Stats -->
+                            <div class="stats-container">
+                                <div class="stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.1s">
+                                    <div class="stat-header">
+                                        <div class="icon revenue">
+                                            <i class="fas fa-dollar-sign"></i>
+                                        </div>
+                                        <div class="stat-menu">
+                                            <button class="btn btn-icon">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="stat-info">
+                                        <p>Total Revenue</p>
+                                        <h3>Rp ${dashboardStats.total_revenue.toLocaleString()}</h3>
+                                        <div class="stat-footer">
+                                            <span class="trend ${dashboardStats.revenue_trend >= 0 ? 'positive' : 'negative'}">
+                                                <i class="fas fa-arrow-${dashboardStats.revenue_trend >= 0 ? 'up' : 'down'}"></i>
+                                                ${Math.abs(dashboardStats.revenue_trend)}%
+                                            </span>
+                                            <span class="period">vs last month</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <button class="btn btn-sm btn-outline">
-                                    <i class="fas fa-download"></i>
-                                    Report
-                                </button>
-                            </div>
-                            <div class="chart-body">
-                                <canvas id="itemsChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
 
-                    <!-- Recent Orders -->
-                    <div class="recent-orders animate__animated animate__fadeInUp" style="animation-delay: 0.7s">
-                        <div class="section-header">
-                            <div class="section-title">
-                                <h3>Recent Orders</h3>
-                                <p>Latest customer orders</p>
+                                <div class="stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
+                                    <div class="stat-header">
+                                        <div class="icon orders">
+                                            <i class="fas fa-shopping-bag"></i>
+                                        </div>
+                                        <div class="stat-menu">
+                                            <button class="btn btn-icon">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="stat-info">
+                                        <p>Total Orders</p>
+                                        <h3>${dashboardStats.total_orders}</h3>
+                                        <div class="stat-footer">
+                                            <span class="trend ${dashboardStats.orders_trend >= 0 ? 'positive' : 'negative'}">
+                                                <i class="fas fa-arrow-${dashboardStats.orders_trend >= 0 ? 'up' : 'down'}"></i>
+                                                ${Math.abs(dashboardStats.orders_trend)}%
+                                            </span>
+                                            <span class="period">vs last month</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.3s">
+                                    <div class="stat-header">
+                                        <div class="icon customers">
+                                            <i class="fas fa-users"></i>
+                                        </div>
+                                        <div class="stat-menu">
+                                            <button class="btn btn-icon">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="stat-info">
+                                        <p>Total Customers</p>
+                                        <h3>${dashboardStats.total_customers}</h3>
+                                        <div class="stat-footer">
+                                            <span class="trend ${dashboardStats.customers_trend >= 0 ? 'positive' : 'negative'}">
+                                                <i class="fas fa-arrow-${dashboardStats.customers_trend >= 0 ? 'up' : 'down'}"></i>
+                                                ${Math.abs(dashboardStats.customers_trend)}%
+                                            </span>
+                                            <span class="period">vs last month</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.4s">
+                                    <div class="stat-header">
+                                        <div class="icon tables">
+                                            <i class="fas fa-chair"></i>
+                                        </div>
+                                        <div class="stat-menu">
+                                            <button class="btn btn-icon">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="stat-info">
+                                        <p>Active Tables</p>
+                                        <h3>${dashboardStats.active_tables}/${dashboardStats.total_tables}</h3>
+                                        <div class="stat-footer">
+                                            <div class="progress-bar">
+                                                <div class="progress" style="width: ${dashboardStats.occupancy_rate}%"></div>
+                                            </div>
+                                            <span class="period">${dashboardStats.occupancy_rate}% Occupied</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="section-actions">
-                                <button class="btn btn-outline btn-sm">
-                                    <i class="fas fa-filter"></i>
-                                    Filter
-                                </button>
-                                <a href="#orders" class="btn btn-primary btn-sm">View All</a>
+
+                            <!-- Charts Section -->
+                            <div class="charts-container">
+                                <div class="chart-card animate__animated animate__fadeInUp" style="animation-delay: 0.5s">
+                                    <div class="chart-header">
+                                        <div class="chart-title">
+                                            <h3>Revenue Overview</h3>
+                                            <p>Monthly revenue statistics</p>
+                                        </div>
+                                        <div class="chart-actions">
+                                            <div class="btn-group">
+                                                <button class="btn btn-sm btn-outline">Weekly</button>
+                                                <button class="btn btn-sm btn-outline active">Monthly</button>
+                                                <button class="btn btn-sm btn-outline">Yearly</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="chart-body">
+                                        <canvas id="revenueChart"></canvas>
+                                    </div>
+                                </div>
+
+                                <div class="chart-card animate__animated animate__fadeInUp" style="animation-delay: 0.6s">
+                                    <div class="chart-header">
+                                        <div class="chart-title">
+                                            <h3>Popular Items</h3>
+                                            <p>Top selling menu items</p>
+                                        </div>
+                                        <button class="btn btn-sm btn-outline">
+                                            <i class="fas fa-download"></i>
+                                            Report
+                                        </button>
+                                    </div>
+                                    <div class="chart-body">
+                                        <canvas id="itemsChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Recent Orders -->
+                            <div class="recent-orders animate__animated animate__fadeInUp" style="animation-delay: 0.7s">
+                                <div class="section-header">
+                                    <div class="section-title">
+                                        <h3>Recent Orders</h3>
+                                        <p>Latest customer orders</p>
+                                    </div>
+                                    <div class="section-actions">
+                                        <button class="btn btn-outline btn-sm">
+                                            <i class="fas fa-filter"></i>
+                                            Filter
+                                        </button>
+                                        <a href="#orders" class="btn btn-primary btn-sm">View All</a>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="orders-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Order ID</th>
+                                                <th>Customer</th>
+                                                <th>Items</th>
+                                                <th>Total</th>
+                                                <th>Status</th>
+                                                <th>Time</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            ${orderFlow.recent_orders.map(order => `
+                                                <tr>
+                                                    <td><span class="order-id">#${order.order_id}</span></td>
+                                                    <td>
+                                                        <div class="customer-info">
+                                                            <img src="${order.customer.avatar || 'assets/img/default-avatar.jpg'}" alt="Customer">
+                                                            <span>${order.customer.name}</span>
+                                                        </div>
+                                                    </td>
+                                                    <td>${order.items_count} items</td>
+                                                    <td>Rp ${order.total.toLocaleString()}</td>
+                                                    <td><span class="status-badge ${order.status.toLowerCase()}">${order.status}</span></td>
+                                                    <td>${order.time_ago}</td>
+                                                    <td>
+                                                        <div class="action-buttons">
+                                                            <button class="btn btn-icon" title="View Details" onclick="viewOrder('${order.order_id}')">
+                                                                <i class="fas fa-eye"></i>
+                                                            </button>
+                                                            <button class="btn btn-icon" title="Print" onclick="printOrder('${order.order_id}')">
+                                                                <i class="fas fa-print"></i>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            `).join('')}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
-                        <div class="table-responsive">
-                            <table class="orders-table">
-                                <thead>
-                                    <tr>
-                                        <th>Order ID</th>
-                                        <th>Customer</th>
-                                        <th>Items</th>
-                                        <th>Total</th>
-                                        <th>Status</th>
-                                        <th>Time</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td><span class="order-id">#ORD-001</span></td>
-                                        <td>
-                                            <div class="customer-info">
-                                                <img src="assets/img/avatar1.jpg" alt="Customer">
-                                                <span>John Doe</span>
-                                            </div>
-                                        </td>
-                                        <td>3 items</td>
-                                        <td>Rp 150,000</td>
-                                        <td><span class="status-badge completed">Completed</span></td>
-                                        <td>5 min ago</td>
-                                        <td>
-                                            <div class="action-buttons">
-                                                <button class="btn btn-icon" title="View Details">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                                <button class="btn btn-icon" title="Print">
-                                                    <i class="fas fa-print"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- Add more rows as needed -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            `,
+                    `;
+                } catch (error) {
+                    console.error('Error loading dashboard:', error);
+                    return '<div class="error-message">Failed to load dashboard data</div>';
+                }
+            },
             orders: `
                 <div class="orders-content animate__animated animate__fadeIn">
                     <div class="page-header">
@@ -1316,7 +1331,7 @@ class Navigation {
             }, 0);
         }
 
-        return pages[page] || '<div>Page not found</div>';
+        return pages[page] ? await pages[page]() : '<div>Page not found</div>';
     }
 
     handleInitialLoad() {
@@ -1452,10 +1467,182 @@ class Navigation {
             document.body.style.overflow = '';
         }
     }
+
+    async loadDashboardContent(page) {
+        const mainContent = document.getElementById('pageContent');
+        
+        try {
+            switch(page) {
+                case 'dashboard':
+                    const dashboardStats = await api.getDashboardStats();
+                    mainContent.innerHTML = this.renderDashboard(dashboardStats);
+                    // Inisialisasi charts dengan data aktual
+                    new ReportCharts().initializeCharts();
+                    break;
+
+                case 'orders':
+                    const [orderFlow, analytics] = await Promise.all([
+                        api.getOrderFlow(),
+                        api.getOrderAnalytics()
+                    ]);
+                    mainContent.innerHTML = this.renderOrders(orderFlow, analytics);
+                    this.initializeOrderMonitoring();
+                    break;
+
+                case 'menu':
+                    const menus = await api.getMenus();
+                    mainContent.innerHTML = this.renderMenu(menus);
+                    new MenuGallery();
+                    break;
+
+                case 'tables':
+                    const tables = await api.getTables();
+                    mainContent.innerHTML = this.renderTables(tables);
+                    this.initializeTableMonitoring();
+                    break;
+            }
+        } catch (error) {
+            mainContent.innerHTML = this.renderError(error.message);
+        }
+    }
+
+    renderDashboard(stats) {
+        return `
+            <div class="dashboard-container">
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <div class="stat-info">
+                            <h3>Total Pendapatan</h3>
+                            <p>Rp ${stats.total_revenue?.toLocaleString() || '0'}</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-shopping-cart"></i>
+                        <div class="stat-info">
+                            <h3>Total Orders</h3>
+                            <p>${stats.total_orders || '0'}</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-users"></i>
+                        <div class="stat-info">
+                            <h3>Total Customers</h3>
+                            <p>${stats.total_customers || '0'}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="charts-container">
+                    <!-- Charts akan diinisialisasi oleh ReportCharts -->
+                </div>
+            </div>
+        `;
+    }
+
+    renderOrders(orderFlow, analytics) {
+        return `
+            <div class="orders-container">
+                <div class="order-stats">
+                    <div class="stat-card">
+                        <h3>Pending Orders</h3>
+                        <p>${orderFlow.pending_count || 0}</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Processing Orders</h3>
+                        <p>${orderFlow.processing_count || 0}</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Completed Today</h3>
+                        <p>${orderFlow.completed_today || 0}</p>
+                    </div>
+                </div>
+
+                <div class="orders-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Table</th>
+                                <th>Items</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${orderFlow.orders?.map(order => `
+                                <tr>
+                                    <td>#${order.id}</td>
+                                    <td>${order.table_number}</td>
+                                    <td>${order.items?.length || 0} items</td>
+                                    <td>Rp ${order.total?.toLocaleString() || 0}</td>
+                                    <td>
+                                        <span class="status-badge status-${order.status?.toLowerCase()}">
+                                            ${order.status}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button onclick="viewOrder(${order.id})">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button onclick="updateOrder(${order.id})">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `).join('') || ''}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+    }
+
+    initializeOrderMonitoring() {
+        // Inisialisasi WebSocket untuk monitoring order real-time
+        const ws = api.connectToKDS('admin');
+        
+        ws.onmessage = (event) => {
+            const update = JSON.parse(event.data);
+            this.updateOrdersUI(update);
+        };
+    }
+
+    updateOrdersUI(update) {
+        // Update UI berdasarkan WebSocket message
+        const ordersTable = document.querySelector('.orders-table tbody');
+        if (!ordersTable) return;
+
+        // Update atau tambah order baru
+        if (update.type === 'new_order' || update.type === 'order_update') {
+            // Implementasi update UI
+        }
+    }
 }
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', () => {
+    // Cek role user
+    const userRole = localStorage.getItem('userRole');
+    if (!userRole || userRole !== 'admin') {
+        // Redirect ke halaman yang sesuai
+        switch(userRole) {
+            case 'staff':
+                window.location.href = '/Frontend/dashboard_staff/index.html';
+                break;
+            case 'chef':
+                window.location.href = '/Frontend/kitchen_display/index.html';
+                break;
+            default:
+                window.location.href = '/Frontend/auth/login/index.html';
+        }
+        return;
+    }
+
+    // Inisialisasi aplikasi jika role sesuai
     new Navigation();
     new MenuGallery();
 });
@@ -1484,4 +1671,4 @@ function createOrderRow(order) {
             </td>
         </tr>
     `;
-} 
+}

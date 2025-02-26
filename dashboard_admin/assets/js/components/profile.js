@@ -1,8 +1,40 @@
+import { api } from '../utils/api.js';
+
 export class ProfileManager {
     constructor() {
         this.initializeTabs();
         this.initializePasswordToggles();
         this.initializeImageUploads();
+        this.loadProfile();
+    }
+
+    async loadProfile() {
+        try {
+            const response = await api.fetchWithAuth('/profile');
+            const profile = response.data;
+            this.updateProfileUI(profile);
+        } catch (error) {
+            console.error('Error loading profile:', error);
+        }
+    }
+
+    updateProfileUI(profile) {
+        // Update avatar
+        const avatar = document.querySelector('.profile-avatar img');
+        if (avatar && profile.avatar_url) {
+            avatar.src = profile.avatar_url;
+        }
+
+        // Update cover
+        const cover = document.querySelector('.profile-cover');
+        if (cover && profile.cover_url) {
+            cover.style.backgroundImage = `url(${profile.cover_url})`;
+        }
+
+        // Update profile info
+        document.getElementById('profileName').textContent = profile.name;
+        document.getElementById('profileEmail').textContent = profile.email;
+        document.getElementById('profileRole').textContent = profile.role;
     }
 
     initializeTabs() {

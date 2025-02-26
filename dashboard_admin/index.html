@@ -20,12 +20,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Animation Library -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <script>
+        function handleImageError(img) {
+            img.onerror = null; // Prevent infinite loop
+            img.src = '/assets/img/default.jpg';
+        }
+    </script>
 </head>
 <body>
     <!-- Sidebar -->
     <nav class="sidebar" id="sidebar">
         <div class="sidebar-header animate__animated animate__fadeIn">
-            <img src="assets/img/logo.png" alt="Logo" class="logo">
+            <img src="/assets/img/logo.png" onerror="handleImageError(this)" alt="Logo" class="logo">
             <h2>RestoPro</h2>
             <button class="close-sidebar" id="closeSidebar">
                 <i class="fas fa-times"></i>
@@ -97,7 +103,7 @@
                 </div>
                 <div class="profile-dropdown">
                     <div class="profile-info">
-                        <img src="assets/img/avatar.jpg" alt="Profile">
+                        <img src="/assets/img/avatar.jpg" onerror="handleImageError(this)" alt="Profile">
                         <span>Admin Name</span>
                         <i class="fas fa-chevron-down"></i>
                     </div>
@@ -136,7 +142,7 @@
 
                         <div class="customer-section">
                             <div class="customer-header">
-                                <img src="assets/img/avatar1.jpg" alt="Customer" class="customer-avatar">
+                                <img src="/assets/img/avatar1.jpg" alt="Customer" class="customer-avatar">
                                 <div class="customer-info-details">
                                     <h4>John Doe</h4>
                                     <div class="info-item">
@@ -166,7 +172,7 @@
                                         <tr>
                                             <td>
                                                 <div class="item-details">
-                                                    <img src="assets/img/menu/nasi-goreng.jpg" alt="Nasi Goreng" class="item-image">
+                                                    <img src="/assets/img/menu/nasi-goreng.jpg" alt="Nasi Goreng" class="item-image">
                                                     <div class="item-info">
                                                         <span class="item-name">Nasi Goreng</span>
                                                         <span class="item-category">Main Course</span>
@@ -412,7 +418,7 @@
                             <label>Menu Images</label>
                             <div class="image-preview-container">
                                 <div class="image-preview">
-                                    <img src="assets/img/menu/preview1.jpg" alt="Preview">
+                                    <img src="/assets/img/menu/preview1.jpg" alt="Preview">
                                     <button type="button" class="remove-image">
                                         <i class="fas fa-times"></i>
                                     </button>
@@ -446,14 +452,14 @@
                     <div class="menu-details">
                         <div class="menu-gallery">
                             <div class="main-image">
-                                <img src="assets/img/menu/nasi-goreng.jpg" alt="Nasi Goreng" id="mainImage">
+                                <img src="/assets/img/menu/nasi-goreng.jpg" alt="Nasi Goreng" id="mainImage">
                             </div>
                             <div class="thumbnail-list">
                                 <div class="thumbnail active">
-                                    <img src="assets/img/menu/nasi-goreng.jpg" alt="Thumbnail 1">
+                                    <img src="/assets/img/menu/nasi-goreng.jpg" alt="Thumbnail 1">
                                 </div>
                                 <div class="thumbnail">
-                                    <img src="assets/img/menu/nasi-goreng-2.jpg" alt="Thumbnail 2">
+                                    <img src="/assets/img/menu/nasi-goreng-2.jpg" alt="Thumbnail 2">
                                 </div>
                                 <!-- Add more thumbnails as needed -->
                             </div>
@@ -649,6 +655,6 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="assets/js/main.js" type="module"></script>
+    <script type="module" src="assets/js/main.js"></script>
 </body>
 </html>
