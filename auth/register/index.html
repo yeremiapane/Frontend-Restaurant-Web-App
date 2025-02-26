@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Restaurant App</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="register-box">
+            <div class="cube">
+                <div class="face front"></div>
+                <div class="face back"></div>
+                <div class="face right"></div>
+                <div class="face left"></div>
+                <div class="face top"></div>
+                <div class="face bottom"></div>
+            </div>
+            <h2>Register</h2>
+            <form id="registerForm">
+                <div class="input-group">
+                    <input type="text" id="fullname" required>
+                    <label>Nama Lengkap</label>
+                </div>
+                <div class="input-group">
+                    <input type="email" id="email" required>
+                    <label>Email</label>
+                </div>
+                <div class="input-group">
+                    <select id="role" required>
+                        <option value="">Pilih Role</option>
+                        <option value="admin">Admin</option>
+                        <option value="staff">Staff</option>
+                        <option value="chef">Chef</option>
+                    </select>
+                    <label class="select-label">Role</label>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="password" required>
+                    <label>Password</label>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="confirmPassword" required>
+                    <label>Konfirmasi Password</label>
+                </div>
+                <button type="submit">
+                    <span>Register</span>
+                    <div class="loader"></div>
+                </button>
+                <p class="login-link">Sudah punya akun? <a href="../login">Login di sini</a></p>
+            </form>
+        </div>
+    </div>
+    <script src="assets/js/script.js"></script>
+</body>
+</html>
