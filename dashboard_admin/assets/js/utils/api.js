@@ -1,15 +1,76 @@
-export const api = {
-    baseURL: 'http://localhost:8080', // sesuaikan dengan URL backend Anda
+const BASE_URL = 'http://localhost:8080';
+const WS_URL = 'ws://localhost:8080';
 
+export const api = {
     async get(endpoint) {
         try {
-            const token = localStorage.getItem('token');
-            const response = await fetch(`${this.baseURL}${endpoint}`, {
+            const token = localStorage.getItem('auth_token');
+            
+            console.log('Making API request:', {
+                endpoint,
+                token: token ? token.substring(0, 20) + '...' : 'missing'
+            });
+            
+            if (!token) {
+                console.log('No token found, redirecting to login...');
+                window.location.href = '/Frontend/auth/login/index.html';
+                throw new Error('No authentication token found');
+            }
+
+            const response = await fetch(`${BASE_URL}${endpoint}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 }
+            });
+
+            console.log(`Response from ${endpoint}:`, {
+                status: response.status,
+                statusText: response.statusText,
+                headers: Object.fromEntries([...response.headers])
+            });
+
+            if (response.status === 401) {
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('user_role');
+                window.location.href = '/Frontend/auth/login/index.html';
+                throw new Error('Session expired or invalid token');
+            }
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.message || 'Unknown error'}`);
+            }
+
+            const data = await response.json();
+            
+            // Debug log untuk melihat struktur response
+            console.log(`Data from ${endpoint}:`, data);
+
+            // Periksa struktur response dan return data yang sesuai
+            if (data.status === false) {
+                throw new Error(data.message || 'Server returned error status');
+            }
+
+            return data.data; // Mengembalikan data dari response
+        } catch (error) {
+            console.error('API Error:', error);
+            throw error;
+        }
+    },
+
+    async post(endpoint, data) {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${BASE_URL}${endpoint}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
             });
 
             if (!response.ok) {
@@ -23,52 +84,14 @@ export const api = {
         }
     },
 
-    // Fungsi helper untuk melakukan fetch dengan token
-    async fetchWithAuth(endpoint, options = {}) {
-        const token = localStorage.getItem('token');
-        
-        if (!token) {
-            window.location.href = '/Frontend/auth/login/index.html';
-            throw new Error('No token found');
-        }
-
-        const defaultOptions = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            ...options
-        };
-
-        try {
-            const response = await fetch(`${this.baseURL}${endpoint}`, defaultOptions);
-            
-            if (response.status === 401) {
-                localStorage.removeItem('token');
-                localStorage.removeItem('userRole');
-                window.location.href = '/Frontend/auth/login/index.html';
-                throw new Error('Unauthorized');
-            }
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            return response;
-        } catch (error) {
-            console.error('API Error:', error);
-            throw error;
-        }
-    },
-
     // Endpoints sesuai dengan router.go
     async getDashboardStats() {
-        const response = await this.fetchWithAuth('/admin/dashboard/stats');
+        const response = await this.fetchWithAuth('/dashboard/stats');
         return response.json();
     },
 
     async getOrderFlow() {
-        const response = await this.fetchWithAuth('/admin/orders/flow');
+        const response = await this.fetchWithAuth('/orders/flow');
         return response.json();
     },
 
@@ -122,12 +145,24 @@ export const api = {
 
     // Method untuk WebSocket
     connectToKDS(role) {
-        const ws = new WebSocket(`ws://localhost:8080/ws/${role}`);
+        const token = localStorage.getItem('auth_token');
+        if (!token) {
+            throw new Error('No authentication token found');
+        }
+
+        const ws = new WebSocket(`${WS_URL}/ws/${role}?token=${token}`);
         
         ws.onopen = () => {
-            console.log('Connected to KDS WebSocket');
+            console.log(`Connected to KDS WebSocket as ${role}`);
         };
-        
+
+        ws.onerror = (error) => {
+            console.error('WebSocket connection error:', error);
+            if (error.target && error.target.readyState !== WebSocket.OPEN) {
+                console.error('WebSocket connection failed. State:', error.target.readyState);
+            }
+        };
+
         return ws;
     },
 

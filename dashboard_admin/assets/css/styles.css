@@ -503,4 +503,63 @@ body {
 .m-2 { margin: var(--spacing-sm); }
 .m-3 { margin: var(--spacing-md); }
 .m-4 { margin: var(--spacing-lg); }
-.m-5 { margin: var(--spacing-xl); } 
+.m-5 { margin: var(--spacing-xl); }
+
+/* Recent Orders Section */
+.recent-orders {
+    background: var(--surface);
+    border-radius: 1rem;
+    padding: var(--spacing-lg);
+    margin-top: var(--spacing-lg);
+    box-shadow: var(--shadow-md);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+/* Status Badge Variants */
+.status-badge.pending_payment {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--warning);
+}
+
+.status-badge.paid {
+    background: rgba(34, 197, 94, 0.1);
+    color: var(--success);
+}
+
+.status-badge.in_progress {
+    background: rgba(37, 99, 235, 0.1);
+    color: var(--primary);
+}
+
+.status-badge.ready {
+    background: rgba(34, 197, 94, 0.1);
+    color: var(--success);
+}
+
+.status-badge.completed {
+    background: rgba(100, 116, 139, 0.1);
+    color: var(--secondary);
+}
+
+/* Order Items Display */
+.order-items {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.order-items span {
+    font-size: 0.875rem;
+    color: var(--text-light);
+}
+
+.order-items span + span::before {
+    content: ", ";
+} 

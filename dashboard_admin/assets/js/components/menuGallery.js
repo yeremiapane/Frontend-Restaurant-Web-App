@@ -2,40 +2,44 @@ import { api } from '../utils/api.js';
 
 export class MenuGallery {
     constructor() {
-        this.loadMenus();
+        this.menuContainer = document.getElementById('menuGallery');
+        if (this.menuContainer) {
+            this.loadMenus();
+        }
     }
 
     async loadMenus() {
         try {
-            const token = localStorage.getItem('token');
-            if (!token) throw new Error('No token found');
+            const token = localStorage.getItem('auth_token');
+            if (!token) {
+                throw new Error('No token found');
+            }
 
             const response = await fetch('http://localhost:8080/menus', {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
                 }
             });
 
             if (!response.ok) {
-                throw new Error('Failed to fetch menus');
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
 
             const data = await response.json();
             
-            // Pastikan data memiliki struktur yang benar
-            if (!data || !data.data) {
-                throw new Error('Invalid data structure');
+            if (this.menuContainer) {
+                this.menuContainer.innerHTML = this.renderMenus(data.data || data);
             }
-
-            this.renderMenus(data.data);
         } catch (error) {
             console.error('Error loading menus:', error);
-            document.getElementById('menuGallery').innerHTML = `
-                <div class="error-message">
-                    <p>Failed to load menu items</p>
-                    <button onclick="window.location.reload()">Retry</button>
-                </div>
-            `;
+            if (this.menuContainer) {
+                this.menuContainer.innerHTML = `
+                    <div class="error-message">
+                        Failed to load menus. ${error.message}
+                    </div>
+                `;
+            }
         }
     }
 

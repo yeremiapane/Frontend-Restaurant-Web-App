@@ -26,39 +26,41 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 
         const data = await response.json();
         
+        // Debug log
+        console.log('Full login response:', data);
+        
         if (response.ok) {
-            // Debug: Periksa data yang diterima dari server
-            console.log('Response data:', data);
+            if (!data.data || !data.data.token || !data.data.user_role) {
+                console.error('Invalid response structure:', data);
+                throw new Error('Invalid response format from server');
+            }
             
-            localStorage.setItem('token', data.data.token);
-            localStorage.setItem('userRole', data.data.user_role);
+            // Simpan token dan role
+            localStorage.setItem('auth_token', data.data.token);
+            localStorage.setItem('user_role', data.data.user_role);
             
-            // Debug: Periksa data yang tersimpan di localStorage
-            console.log('Stored data:', {
-                token: localStorage.getItem('token'),
-                userRole: localStorage.getItem('userRole')
+            // Debug log
+            console.log('Stored auth data:', {
+                token: localStorage.getItem('auth_token'),
+                role: localStorage.getItem('user_role')
             });
             
             showAlert('Login berhasil!', 'success');
             
-            // Perbaiki path redirect relatif
-            const userRole = data.data.user_role.toLowerCase();
-            console.log('User role:', userRole); // Debug
-            
-            // Gunakan path relatif
+            // Redirect berdasarkan role
             setTimeout(() => {
-                if (userRole === 'admin') {
-                    window.location.href = '../../dashboard_admin/index.html';
-                } else if (userRole === 'staff') {
-                    window.location.href = '../../dashboard_staff/index.html';
-                } else if (userRole === 'chef') {
-                    window.location.href = '../../kitchen_display/index.html';
-                } else {
-                    window.location.href = '../login/index.html';
+                const userRole = data.data.user_role.toLowerCase();
+                switch(userRole) {
+                    case 'admin':
+                        window.location.href = '/Frontend/dashboard_admin/index.html';
+                        break;
+                    default:
+                        console.error('Unknown role:', userRole);
+                        window.location.href = '/Frontend/auth/login/index.html';
                 }
             }, 1000);
         } else {
-            throw new Error(data.error || 'Login gagal');
+            throw new Error(data.message || 'Login gagal');
         }
     } catch (error) {
         console.error('Login error:', error);
