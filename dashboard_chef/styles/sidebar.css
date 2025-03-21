@@ -1,0 +1,238 @@
+.sidebar {
+    width: var(--sidebar-width);
+    height: 100vh;
+    background: var(--surface-color);
+    position: fixed;
+    left: 0;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow);
+    z-index: 999;
+    border-right: 1px solid var(--border-color);
+}
+
+.sidebar-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    min-height: var(--header-height);
+    display: flex;
+    align-items: center;
+}
+
+.sidebar-header h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-color);
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.sidebar-menu {
+    flex: 1;
+    padding: 1rem 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1.5rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border-left: 2px solid transparent;
+}
+
+.menu-item:hover {
+    color: var(--primary-color);
+    background-color: var(--hover-color);
+}
+
+.menu-item.active {
+    color: var(--primary-color);
+    background-color: var(--hover-color);
+    border-left-color: var(--primary-color);
+}
+
+.menu-item i {
+    font-size: 1.125rem;
+    width: 1.5rem;
+    text-align: center;
+}
+
+.menu-item span {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* Logout Menu Item */
+.menu-item.logout {
+    margin-top: auto;
+    color: #DC2626;
+}
+
+.menu-item.logout:hover {
+    background-color: #FEE2E2;
+    color: #B91C1C;
+}
+
+.sidebar-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border-color);
+    background: var(--surface-color);
+}
+
+.sidebar-footer .user-profile {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 0;
+    margin-bottom: 1rem;
+}
+
+.user-profile img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.user-role {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: #FEE2E2;
+    border: none;
+    border-radius: 6px;
+    color: #DC2626;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.logout-btn:hover {
+    background: #FEF2F2;
+    color: #B91C1C;
+}
+
+.logout-btn i {
+    font-size: 1.125rem;
+}
+
+.sidebar-toggle-btn {
+    display: none;
+    padding: 0.5rem;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.sidebar-toggle-btn:hover {
+    color: var(--primary-color);
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    .sidebar-toggle-btn {
+        display: block;
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+}
+
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 998;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+/* Dark Mode Support - Dinonaktifkan */
+@media (prefers-color-scheme: dark) {
+    .sidebar {
+        background: var(--surface-color);
+    }
+
+    .sidebar-header {
+        border-bottom-color: var(--border-color);
+    }
+
+    .sidebar-header h2 {
+        color: var(--text-color);
+    }
+
+    .menu-item {
+        color: var(--text-muted);
+    }
+
+    .menu-item:hover {
+        background-color: var(--hover-color);
+    }
+
+    .menu-item.active {
+        background-color: var(--hover-color);
+    }
+
+    .sidebar-footer {
+        border-top-color: var(--border-color);
+    }
+
+    .logout-btn {
+        background: rgba(239, 68, 68, 0.05);
+        border-color: #fca5a5;
+        color: #dc2626;
+    }
+
+    .logout-btn:hover {
+        background-color: rgba(239, 68, 68, 0.1);
+        border-color: #ef4444;
+    }
+} 
+} 

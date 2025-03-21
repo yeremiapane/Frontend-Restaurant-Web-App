@@ -1,73 +1,79 @@
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
     const button = e.target.querySelector('button');
-    const buttonText = button.querySelector('span');
-    const loader = button.querySelector('.loader');
-    
-    // Tampilkan loading
-    buttonText.style.opacity = '0';
-    loader.style.display = 'block';
     
     try {
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
+        // Show loading state
+        button.classList.add('loading');
         
         const response = await fetch('http://localhost:8080/login', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ 
-                email,
-                password 
-            })
+            body: JSON.stringify({ email, password })
         });
 
-        const data = await response.json();
+        // Log response untuk debug
+        console.log('Response status:', response.status);
+        const responseText = await response.text();
+        console.log('Response text:', responseText);
         
-        // Debug log
-        console.log('Full login response:', data);
+        // Parse response text ke JSON
+        let data;
+        try {
+            data = JSON.parse(responseText);
+        } catch (parseError) {
+            console.error('Error parsing response:', parseError);
+            throw new Error('Invalid response format from server');
+        }
         
         if (response.ok) {
+            console.log('Login response data:', data);
+            
+            // Periksa format response
             if (!data.data || !data.data.token || !data.data.user_role) {
-                console.error('Invalid response structure:', data);
                 throw new Error('Invalid response format from server');
             }
             
-            // Simpan token dan role
-            localStorage.setItem('auth_token', data.data.token);
+            // Save token dan role
+            localStorage.setItem('token', data.data.token);
             localStorage.setItem('user_role', data.data.user_role);
             
-            // Debug log
-            console.log('Stored auth data:', {
-                token: localStorage.getItem('auth_token'),
-                role: localStorage.getItem('user_role')
-            });
-            
+            // Show success message
             showAlert('Login berhasil!', 'success');
             
-            // Redirect berdasarkan role
+            // Redirect based on role
+            const role = data.data.user_role.toLowerCase();
+            console.log('User role:', role);
+            
             setTimeout(() => {
-                const userRole = data.data.user_role.toLowerCase();
-                switch(userRole) {
+                switch (role) {
+                    case 'chef':
+                        window.location.href = '/Frontend/dashboard_chef/index.html';
+                        break;
                     case 'admin':
                         window.location.href = '/Frontend/dashboard_admin/index.html';
                         break;
+                    case 'waiter':
+                        window.location.href = '/Frontend/dashboard_waiter/index.html';
+                        break;
                     default:
-                        console.error('Unknown role:', userRole);
-                        window.location.href = '/Frontend/auth/login/index.html';
+                        showAlert('Role tidak valid', 'error');
                 }
-            }, 1000);
+            }, 1000); // Delay 1 detik untuk memastikan alert terlihat
         } else {
             throw new Error(data.message || 'Login gagal');
         }
     } catch (error) {
         console.error('Login error:', error);
-        showAlert(error.message || 'Terjadi kesalahan!', 'error');
+        showAlert(error.message || 'Terjadi kesalahan saat login', 'error');
     } finally {
-        buttonText.style.opacity = '1';
-        loader.style.display = 'none';
+        // Hide loading state
+        button.classList.remove('loading');
     }
 });
 

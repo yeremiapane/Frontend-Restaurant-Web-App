@@ -1,108 +1,90 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kitchen Display System</title>
+    <title>Dashboard Chef</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/sidebar.css">
+    <link rel="stylesheet" href="styles/dashboard.css">
+    <link rel="stylesheet" href="styles/orders.css">
+    <link rel="stylesheet" href="styles/notifications.css">
+    
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-
 <body>
-    <div class="main-container">
-        <!-- Mobile Menu Toggle -->
-        <button class="mobile-menu-toggle" id="menuToggle">
-            <i class="fas fa-bars"></i>
-        </button>
-
-        <!-- Sidebar/Dropdown Menu -->
-        <nav class="sidebar" id="sidebar">
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
             <div class="sidebar-header">
-                <h2>KDS System</h2>
-                <button class="close-menu" id="closeMenu">
-                    <i class="fas fa-times"></i>
-                </button>
+                <h2>Chef Dashboard</h2>
             </div>
             
-            <!-- Profile Section -->
-            <div class="profile-section">
-                <div class="profile-image">
-                    <img src="assets/images/chef-avatar.png" alt="Chef Profile">
-                </div>
-                <div class="profile-info">
-                    <h3>Chef John Doe</h3>
-                    <p>Master Chef</p>
-                </div>
-            </div>
-            
-            <ul class="sidebar-menu">
-                <li class="active">
-                    <a href="#" data-page="dashboard">
-                        <i class="fas fa-th-large"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" data-page="completed">
-                        <i class="fas fa-check-circle"></i>
-                        <span>Order Complete</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" data-page="analytics">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Analytics</span>
-                    </a>
-                </li>
-            </ul>
-
-            <!-- Logout Button -->
-            <div class="logout-section">
-                <button class="logout-btn">
+            <!-- Menu Navigation -->
+            <nav class="sidebar-menu">
+                <a href="#" class="menu-item active" data-page="dashboard">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="menu-item" data-page="orders">
+                    <i class="fas fa-utensils"></i>
+                    <span>Pesanan</span>
+                </a>
+                <a href="#" class="menu-item logout" id="logout-button">
                     <i class="fas fa-sign-out-alt"></i>
-                    <span>Logout</span>
-                </button>
-            </div>
-        </nav>
-
-        <!-- Overlay -->
-        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+                    <span>Keluar</span>
+                </a>
+            </nav>
+        </aside>
 
         <!-- Main Content -->
-        <main class="dashboard-container" id="mainContent">
-            <!-- Loading indicator -->
-            <div class="loading-indicator">
-                <i class="fas fa-spinner fa-spin"></i>
-                Loading...
-            </div>
-
-            <!-- Top Navigation -->
-            <nav class="top-nav">
-                <div class="search-bar">
-                    <i class="fas fa-search"></i>
-                    <input type="text" placeholder="Search orders...">
-                </div>
-                <div class="nav-actions">
-                    <button class="notification-btn">
+        <main class="main-content">
+            <header class="top-bar">
+                <button class="sidebar-toggle-btn" aria-label="Toggle Sidebar">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <div class="header-right">
+                    <div class="notifications">
                         <i class="fas fa-bell"></i>
-                        <span class="notification-badge">3</span>
-                    </button>
+                        <span class="badge hidden">0</span>
+                        <div class="notifications-dropdown">
+                            <div class="notifications-header">
+                                <h3>Notifikasi</h3>
+                                <button class="mark-all-read">Tandai Sudah Dibaca</button>
+                            </div>
+                            <div class="notifications-list">
+                                <!-- Notifications will be rendered here -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="user-profile">
+                        <img src="assets/chef-avatar.png" alt="Chef Profile">
+                        <div class="user-info">
+                            <span class="user-name">Chef John</span>
+                            <span class="user-role">Kitchen Staff</span>
+                        </div>
+                    </div>
                 </div>
-            </nav>
+            </header>
 
-            <!-- Content Area -->
-            <div class="content-area">
-                <!-- Content will be loaded dynamically here -->
+            <div id="content">
+                <!-- Page content will be loaded here -->
             </div>
         </main>
     </div>
 
-    <!-- Scripts -->
-    <script src="assets/js/script.js"></script>
-</body>
+    <div class="sidebar-overlay"></div>
 
+    <!-- Scripts -->
+    <script src="js/websocket.js"></script>
+    <script src="js/notifications.js"></script>
+    <script src="js/router.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/orders.js"></script>
+    <script src="js/main.js"></script>
+</body>
 </html>
