@@ -1,0 +1,93 @@
+class Router {
+    constructor() {
+        this.routes = {};
+        this.currentPage = null;
+        this.pageInstances = {};
+        console.log('Router initialized');
+    }
+
+    addRoute(page, handler) {
+        console.log('Adding route:', page);
+        this.routes[page] = handler;
+    }
+
+    async navigateTo(page) {
+        console.log('Navigating to:', page);
+
+        // Prevent navigation to the same page
+        if (this.currentPage === page) {
+            console.log('Already on page:', page);
+            return;
+        }
+
+        // Update page title with proper capitalization
+        const pageTitle = document.getElementById('page-title');
+        if (pageTitle) {
+            const title = page === 'reports' ? 'Reports & Analytics' : page.charAt(0).toUpperCase() + page.slice(1);
+            pageTitle.textContent = title;
+        }
+
+        // Remove active class from all menu items
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.classList.remove('active');
+        });
+
+        // Add active class to current menu item
+        const currentMenuItem = document.querySelector(`.menu-item[data-page="${page}"]`);
+        if (currentMenuItem) {
+            currentMenuItem.classList.add('active');
+        }
+
+        // Reset the current page instance if it exists
+        if (this.pageInstances[this.currentPage]) {
+            this.pageInstances[this.currentPage].initialized = false;
+        }
+
+        // Clear content container and show loading
+        const contentContainer = document.getElementById('content-container');
+        if (contentContainer) {
+            contentContainer.innerHTML = '<div class="loading">Loading...</div>';
+        }
+
+        // Handle page navigation
+        if (this.routes[page]) {
+            try {
+                console.log('Executing route handler for:', page);
+                await this.routes[page]();
+                this.currentPage = page;
+                history.pushState({ page }, '', `#${page}`);
+            } catch (error) {
+                console.error('Error loading page:', error);
+                if (contentContainer) {
+                    contentContainer.innerHTML = '<div class="error">Error loading page: ' + error.message + '</div>';
+                }
+            }
+        } else {
+            console.error('Route not found:', page);
+            if (contentContainer) {
+                contentContainer.innerHTML = '<div class="error">Page not found</div>';
+            }
+        }
+    }
+
+    registerPageInstance(pageName, instance) {
+        console.log('Registering page instance:', pageName);
+        this.pageInstances[pageName] = instance;
+    }
+
+    initialize() {
+        // Handle browser back/forward buttons
+        window.addEventListener('popstate', (e) => {
+            const page = e.state ? e.state.page : 'dashboard';
+            this.navigateTo(page);
+        });
+
+        // Get initial page from hash or default to dashboard
+        const initialPage = window.location.hash.slice(1) || 'dashboard';
+        console.log('Initial page:', initialPage);
+        this.navigateTo(initialPage);
+    }
+}
+
+// Initialize router
+window.router = new Router(); 

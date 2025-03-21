@@ -1,0 +1,234 @@
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: var(--sidebar-width);
+    background: white;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    z-index: 100;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar.collapsed {
+    width: var(--sidebar-collapsed-width);
+}
+
+.sidebar-header {
+    padding: 1rem 0;
+    text-align: center;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.sidebar-header h2 {
+    font-size: 1.25rem;
+    color: var(--text-color);
+}
+
+.sidebar-menu {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    color: var(--text-color);
+    text-decoration: none;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.menu-item i {
+    width: 1.5rem;
+    font-size: 1.25rem;
+    margin-right: 1rem;
+}
+
+.menu-item.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+.menu-item:hover:not(.active) {
+    background: #f1f5f9;
+}
+
+.sidebar-footer {
+    padding: 1rem 0;
+    border-top: 1px solid #e2e8f0;
+}
+
+.logout-btn {
+    width: 100%;
+    padding: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: none;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    color: #ef4444;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.logout-btn:hover {
+    background: #fef2f2;
+    border-color: #ef4444;
+}
+
+.sidebar-toggle {
+    display: none;
+    position: absolute;
+    right: -40px;
+    top: 1rem;
+    background: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 0 0.5rem 0.5rem 0;
+    box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    color: var(--text-color);
+}
+
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 99;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    .sidebar-toggle {
+        display: block;
+    }
+
+    .sidebar-overlay.show {
+        display: block;
+    }
+
+    .main-content {
+        margin-left: 0 !important;
+    }
+}
+
+/* Collapsed Sidebar Styles */
+.sidebar.collapsed .sidebar-header h2,
+.sidebar.collapsed .menu-item span,
+.sidebar.collapsed .logout-btn span {
+    display: none;
+}
+
+.sidebar.collapsed .menu-item {
+    justify-content: center;
+    padding: 0.75rem;
+}
+
+.sidebar.collapsed .menu-item i {
+    margin-right: 0;
+}
+
+.sidebar.collapsed .logout-btn {
+    padding: 0.75rem;
+    justify-content: center;
+}
+
+.sidebar.collapsed .logout-btn i {
+    margin: 0;
+}
+
+.logo {
+    width: 35px;
+    height: 35px;
+    object-fit: contain;
+}
+
+.sidebar-nav {
+    padding: 1.5rem 0;
+}
+
+.sidebar-nav ul {
+    list-style: none;
+}
+
+.sidebar-nav li {
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #64748b;
+    position: relative;
+    white-space: nowrap;
+}
+
+.sidebar-nav li:hover {
+    background: #f8fafc;
+    color: var(--primary-color);
+}
+
+.sidebar-nav li.active {
+    background: #eff6ff;
+    color: var(--primary-color);
+    border-right: 3px solid var(--primary-color);
+}
+
+.sidebar-nav li i {
+    width: 20px;
+    text-align: center;
+    font-size: 1.1rem;
+}
+
+.sidebar-nav li span {
+    font-weight: 500;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar.collapsed + .main-content {
+    margin-left: var(--sidebar-collapsed-width);
+}
+
+/* Hover effect for collapsed sidebar */
+@media (min-width: 769px) {
+    .sidebar.collapsed .sidebar-nav li:hover {
+        width: 240px;
+        background: #f8fafc;
+    }
+
+    .sidebar.collapsed .sidebar-nav li:hover span {
+        opacity: 1;
+        visibility: visible;
+        transition-delay: 0.1s;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar-footer {
+        width: 100%;
+    }
+} 

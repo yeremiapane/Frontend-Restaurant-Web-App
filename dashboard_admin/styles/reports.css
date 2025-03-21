@@ -1,0 +1,338 @@
+/* Reports Page Styles */
+.reports-page {
+    padding: 20px;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.page-header h1 {
+    font-size: 1.5rem;
+    color: #111827;
+    margin: 0;
+}
+
+.date-filter select {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: 1px solid #E5E7EB;
+    background-color: white;
+    font-size: 0.875rem;
+    color: #374151;
+    cursor: pointer;
+}
+
+/* Dashboard Grid Layout */
+.dashboard-grid {
+    display: grid;
+    gap: 24px;
+    grid-template-columns: repeat(12, 1fr);
+}
+
+/* Summary Cards */
+.summary-cards {
+    grid-column: span 12;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.card h3 {
+    color: #6B7280;
+    font-size: 0.875rem;
+    margin-bottom: 8px;
+}
+
+.card .value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.card .trend {
+    margin-top: 8px;
+    font-size: 0.875rem;
+}
+
+/* Charts Section */
+.charts-section {
+    grid-column: span 12;
+    display: grid;
+    gap: 24px;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.chart-container {
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    min-height: 300px;
+}
+
+.chart-container h3 {
+    color: #374151;
+    margin-bottom: 16px;
+    font-size: 1.125rem;
+}
+
+/* Top Selling Section */
+.top-selling-section {
+    grid-column: span 6;
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.top-selling-section h3 {
+    color: #374151;
+    margin-bottom: 16px;
+    font-size: 1.125rem;
+}
+
+.top-selling-grid {
+    display: grid;
+    gap: 16px;
+}
+
+.top-selling-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background: #F9FAFB;
+    border-radius: 8px;
+    transition: transform 0.2s ease;
+}
+
+.top-selling-item:hover {
+    transform: translateX(4px);
+}
+
+.item-info h4 {
+    margin: 0 0 4px 0;
+    color: #111827;
+    font-size: 1rem;
+}
+
+.item-info p {
+    margin: 0;
+    color: #6B7280;
+    font-size: 0.875rem;
+}
+
+/* Detailed Analytics */
+.detailed-analytics {
+    grid-column: span 6;
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.analytics-card {
+    margin-bottom: 24px;
+}
+
+.analytics-card h3 {
+    color: #374151;
+    margin-bottom: 16px;
+    font-size: 1.125rem;
+}
+
+.menu-performance-table {
+    overflow-x: auto;
+    margin-top: 16px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid #E5E7EB;
+}
+
+th {
+    background: #F9FAFB;
+    color: #374151;
+    font-weight: 600;
+}
+
+td {
+    color: #6B7280;
+}
+
+/* Trend Icons */
+.trend-up {
+    color: #10B981;
+}
+
+.trend-down {
+    color: #EF4444;
+}
+
+.trend-neutral {
+    color: #6B7280;
+}
+
+/* Loading State */
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    color: #6B7280;
+}
+
+/* Error State */
+.error {
+    color: #EF4444;
+    text-align: center;
+    padding: 24px;
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+    .reports-page {
+        color: #F9FAFB;
+    }
+
+    .page-header h1 {
+        color: #F9FAFB;
+    }
+
+    .date-filter select {
+        background: #374151;
+        border-color: #4B5563;
+        color: #F9FAFB;
+    }
+
+    .card, .chart-container, .top-selling-section, .detailed-analytics {
+        background: #1F2937;
+    }
+
+    .card h3 {
+        color: #9CA3AF;
+    }
+
+    .card .value {
+        color: #F9FAFB;
+    }
+
+    .top-selling-item {
+        background: #374151;
+    }
+
+    .item-info h4 {
+        color: #F9FAFB;
+    }
+
+    .item-info p {
+        color: #9CA3AF;
+    }
+
+    th {
+        background: #374151;
+        color: #F9FAFB;
+        border-bottom: 1px solid #4B5563;
+    }
+
+    td {
+        color: #9CA3AF;
+        border-bottom: 1px solid #4B5563;
+    }
+}
+
+/* Responsive Design */
+@media screen and (max-width: 1200px) {
+    .charts-section {
+        grid-template-columns: 1fr;
+    }
+
+    .top-selling-section,
+    .detailed-analytics {
+        grid-column: span 12;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .reports-page {
+        padding: 16px;
+    }
+
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .summary-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-container {
+        padding: 16px;
+        min-height: 250px;
+    }
+
+    .top-selling-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .item-trend {
+        align-self: flex-end;
+    }
+
+    table {
+        font-size: 0.875rem;
+    }
+
+    th, td {
+        padding: 8px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .card {
+        padding: 16px;
+    }
+
+    .card .value {
+        font-size: 1.25rem;
+    }
+
+    .chart-container {
+        min-height: 200px;
+    }
+
+    .menu-performance-table {
+        margin: 0 -16px;
+        width: calc(100% + 32px);
+    }
+}
