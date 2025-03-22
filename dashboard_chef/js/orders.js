@@ -1,14 +1,19 @@
 class OrdersPage {
     constructor() {
         this.orders = [];
-        this.currentFilter = 'all';
+        this.currentFilter = 'completed';
+        this.dateFilter = 'all'; // 'today', 'week', 'month', 'all'
     }
 
     async fetchOrders() {
         try {
-            const response = await fetch('http://localhost:8080/chef/orders', {
+            // Dapatkan ID chef yang sedang login
+            const currentUserId = this.getCurrentUserId();
+            
+            // Fetch order data
+            const response = await fetch('http://localhost:8080/admin/orders', {
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
             });
 
@@ -16,19 +21,62 @@ class OrdersPage {
             
             const data = await response.json();
             if (data.status) {
-                this.orders = data.data;
+                // Filter hanya orders yang dimasak oleh chef ini
+                this.orders = data.data.filter(order => 
+                    order.chef_id === currentUserId && 
+                    ['ready', 'completed'].includes(order.status)
+                );
+                
+                // Terapkan filter waktu
+                this.filterByDate();
+                
+                console.log('Filtered orders:', this.orders);
             }
         } catch (error) {
             console.error('Error fetching orders:', error);
         }
     }
 
+    filterByDate() {
+        if (this.dateFilter === 'all') return;
+        
+        const now = new Date();
+        let startDate;
+        
+        switch (this.dateFilter) {
+            case 'today':
+                startDate = new Date(now.setHours(0, 0, 0, 0));
+                break;
+            case 'week':
+                startDate = new Date(now);
+                startDate.setDate(now.getDate() - 7);
+                break;
+            case 'month':
+                startDate = new Date(now);
+                startDate.setMonth(now.getMonth() - 1);
+                break;
+            default:
+                return;
+        }
+        
+        this.orders = this.orders.filter(order => {
+            const finishDate = order.finish_cooking_time ? new Date(order.finish_cooking_time) : null;
+            return finishDate && finishDate >= startDate;
+        });
+    }
+
     getFilteredOrders() {
-        if (this.currentFilter === 'all') return this.orders;
-        return this.orders.filter(order => order.status.toLowerCase() === this.currentFilter);
+        // Filter berdasarkan status
+        return this.orders.filter(order => {
+            if (this.currentFilter === 'completed') {
+                return ['ready', 'completed'].includes(order.status);
+            }
+            return order.status.toLowerCase() === this.currentFilter;
+        });
     }
 
     formatTime(timestamp) {
+        if (!timestamp) return '-';
         return new Date(timestamp).toLocaleString('id-ID', {
             hour: '2-digit',
             minute: '2-digit',
@@ -36,133 +84,205 @@ class OrdersPage {
             month: 'short'
         });
     }
+    
+    // Menghitung durasi memasak dalam format menit:detik
+    calculateCookingTime(order) {
+        if (!order.start_cooking_time || !order.finish_cooking_time) {
+            return '-';
+        }
+        
+        const startTime = new Date(order.start_cooking_time);
+        const finishTime = new Date(order.finish_cooking_time);
+        
+        // Hitung selisih dalam milidetik
+        const durationMs = finishTime - startTime;
+        
+        // Konversi ke menit dan detik
+        const minutes = Math.floor(durationMs / 60000);
+        const seconds = Math.floor((durationMs % 60000) / 1000);
+        
+        return `${minutes} menit ${seconds} detik`;
+    }
+    
+    // Get current user ID from token
+    getCurrentUserId() {
+        // Gunakan getCurrentUser dari dashboardPage jika tersedia
+        if (window.dashboardPage && typeof window.dashboardPage.getCurrentUserId === 'function') {
+            return window.dashboardPage.getCurrentUserId();
+        }
+        
+        // Fallback jika dashboardPage tidak tersedia
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) return null;
+            
+            // Decode token untuk mendapatkan user ID
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            
+            const payload = JSON.parse(jsonPayload);
+            return payload.user_id || null;
+        } catch (error) {
+            console.error('Error decoding token:', error);
+            return null;
+        }
+    }
 
-    async render(container) {
+    async render() {
+        // Get target container
+        const container = document.getElementById('content');
+        if (!container) return;
+        
         await this.fetchOrders();
+        
+        // Hitung total waktu memasak
+        let totalCookingTime = 0;
+        let orderCount = 0;
+        
+        this.orders.forEach(order => {
+            if (order.start_cooking_time && order.finish_cooking_time) {
+                const startTime = new Date(order.start_cooking_time);
+                const finishTime = new Date(order.finish_cooking_time);
+                const durationMs = finishTime - startTime;
+                
+                if (durationMs > 0) {
+                    totalCookingTime += durationMs;
+                    orderCount++;
+                }
+            }
+        });
+        
+        // Hitung rata-rata waktu memasak
+        let avgCookingTimeStr = '-';
+        if (orderCount > 0) {
+            const avgMs = totalCookingTime / orderCount;
+            const avgMinutes = Math.floor(avgMs / 60000);
+            const avgSeconds = Math.floor((avgMs % 60000) / 1000);
+            avgCookingTimeStr = `${avgMinutes} menit ${avgSeconds} detik`;
+        }
 
         container.innerHTML = `
-            <div class="orders-filter">
-                <button class="filter-btn ${this.currentFilter === 'all' ? 'active' : ''}" 
-                        onclick="ordersPage.setFilter('all')">
-                    All Orders
-                </button>
-                <button class="filter-btn ${this.currentFilter === 'pending' ? 'active' : ''}"
-                        onclick="ordersPage.setFilter('pending')">
-                    Pending
-                </button>
-                <button class="filter-btn ${this.currentFilter === 'preparing' ? 'active' : ''}"
-                        onclick="ordersPage.setFilter('preparing')">
-                    Preparing
-                </button>
-                <button class="filter-btn ${this.currentFilter === 'ready' ? 'active' : ''}"
-                        onclick="ordersPage.setFilter('ready')">
-                    Ready
-                </button>
+            <div class="page-header">
+                <h1>Riwayat Pesanan</h1>
+                <p>Daftar pesanan yang telah selesai dimasak oleh Anda</p>
+            </div>
+            
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-icon completed">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-data">
+                        <span class="stat-value">${this.orders.length}</span>
+                        <span class="stat-label">Total Pesanan Selesai</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon time">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-data">
+                        <span class="stat-value">${avgCookingTimeStr}</span>
+                        <span class="stat-label">Rata-rata Waktu Memasak</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="filter-container">
+                <div class="orders-filter">
+                    <button class="filter-btn ${this.currentFilter === 'ready' ? 'active' : ''}"
+                            onclick="ordersPage.setFilter('ready')">
+                        Siap Disajikan
+                    </button>
+                    <button class="filter-btn ${this.currentFilter === 'completed' ? 'active' : ''}"
+                            onclick="ordersPage.setFilter('completed')">
+                        Semua Selesai
+                    </button>
+                </div>
+                
+                <div class="date-filter">
+                    <label>Filter Waktu:</label>
+                    <select onchange="ordersPage.setDateFilter(this.value)" class="date-select">
+                        <option value="all" ${this.dateFilter === 'all' ? 'selected' : ''}>Semua Waktu</option>
+                        <option value="today" ${this.dateFilter === 'today' ? 'selected' : ''}>Hari Ini</option>
+                        <option value="week" ${this.dateFilter === 'week' ? 'selected' : ''}>7 Hari Terakhir</option>
+                        <option value="month" ${this.dateFilter === 'month' ? 'selected' : ''}>30 Hari Terakhir</option>
+                    </select>
+                </div>
             </div>
 
-            <div class="orders-container">
-                ${this.getFilteredOrders().map(order => `
-                    <div class="order-card">
-                        <div class="order-header">
-                            <span class="order-id">#${order.id}</span>
-                            <span class="order-time">${this.formatTime(order.created_at)}</span>
-                        </div>
-                        <div class="order-content">
-                            <div class="order-items">
-                                ${order.items.map(item => `
-                                    <div class="order-item">
-                                        <div class="item-details">
-                                            <span class="item-quantity">${item.quantity}x</span>
-                                            <div>
-                                                <div class="item-name">${item.menu_name}</div>
-                                                ${item.notes ? `<div class="item-notes">${item.notes}</div>` : ''}
+            <div class="completed-orders-table">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Meja</th>
+                                <th>Waktu Pemesanan</th>
+                                <th>Mulai Dimasak</th>
+                                <th>Selesai Dimasak</th>
+                                <th>Durasi Memasak</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${this.getFilteredOrders().length > 0 ? this.getFilteredOrders().map(order => {
+                                return `
+                                    <tr class="order-row ${order.status.toLowerCase()}">
+                                        <td>#${order.id}</td>
+                                        <td>
+                                            <div class="table-number">
+                                                <i class="fas fa-table"></i>
+                                                <span>Meja ${order.table && order.table.number ? order.table.number : order.table_id}</span>
                                             </div>
+                                        </td>
+                                        <td>${this.formatTime(order.created_at)}</td>
+                                        <td>${this.formatTime(order.start_cooking_time)}</td>
+                                        <td>${this.formatTime(order.finish_cooking_time)}</td>
+                                        <td>${this.calculateCookingTime(order)}</td>
+                                        <td>
+                                            <span class="status-badge ${order.status.toLowerCase()}">
+                                                ${order.status === 'ready' ? 'Siap' : 'Selesai'}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <button class="btn-view" onclick="ordersPage.viewOrderDetails(${order.id})">
+                                                <i class="fas fa-eye"></i>
+                                                <span>Detail</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                `;
+                            }).join('') : `
+                                <tr>
+                                    <td colspan="8" class="no-orders">
+                                        <div class="no-data-message">
+                                            <i class="fas fa-clipboard-list"></i>
+                                            <h3>Belum ada riwayat pesanan</h3>
+                                            <p>Pesanan yang sudah Anda selesaikan akan muncul di sini</p>
                                         </div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                        <div class="order-footer">
-                            <div class="table-info">
-                                <i class="fas fa-table table-icon"></i>
-                                <span class="table-number">Table ${order.table_number}</span>
-                            </div>
-                            <div class="order-actions">
-                                ${order.status === 'pending' ? `
-                                    <button class="action-btn btn-prepare" onclick="ordersPage.startPreparing(${order.id})">
-                                        <i class="fas fa-fire"></i>
-                                        <span>Start Preparing</span>
-                                    </button>
-                                ` : ''}
-                                ${order.status === 'preparing' ? `
-                                    <button class="action-btn btn-ready" onclick="ordersPage.markAsReady(${order.id})">
-                                        <i class="fas fa-check"></i>
-                                        <span>Mark as Ready</span>
-                                    </button>
-                                ` : ''}
-                                <button class="action-btn btn-view" onclick="ordersPage.viewOrderDetails(${order.id})">
-                                    <i class="fas fa-eye"></i>
-                                    <span>View Details</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `).join('')}
+                                    </td>
+                                </tr>
+                            `}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         `;
-
-        // Add CSS class if no orders
-        if (this.getFilteredOrders().length === 0) {
-            const noOrders = document.createElement('div');
-            noOrders.className = 'no-orders';
-            noOrders.innerHTML = `
-                <i class="fas fa-clipboard-list"></i>
-                <h3>No Orders Found</h3>
-                <p>There are no orders matching the selected filter</p>
-            `;
-            container.querySelector('.orders-container').appendChild(noOrders);
-        }
     }
 
     async setFilter(filter) {
         this.currentFilter = filter;
-        await this.render(document.getElementById('content-container'));
+        await this.render();
     }
-
-    async startPreparing(orderId) {
-        try {
-            const response = await fetch(`http://localhost:8080/chef/orders/${orderId}/prepare`, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
-                }
-            });
-
-            if (!response.ok) throw new Error('Failed to update order status');
-
-            // Refresh the page
-            this.render(document.getElementById('content-container'));
-        } catch (error) {
-            console.error('Error updating order:', error);
-        }
-    }
-
-    async markAsReady(orderId) {
-        try {
-            const response = await fetch(`http://localhost:8080/chef/orders/${orderId}/ready`, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
-                }
-            });
-
-            if (!response.ok) throw new Error('Failed to update order status');
-
-            // Refresh the page
-            this.render(document.getElementById('content-container'));
-        } catch (error) {
-            console.error('Error updating order:', error);
-        }
+    
+    async setDateFilter(filter) {
+        this.dateFilter = filter;
+        await this.render();
     }
 
     viewOrderDetails(orderId) {
@@ -174,37 +294,78 @@ class OrdersPage {
         modal.innerHTML = `
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3>Order Details #${order.id}</h3>
+                    <h3>Detail Pesanan #${order.id}</h3>
                     <button class="close-btn" onclick="this.closest('.modal').remove()">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="detail-group">
-                        <label>Table Number:</label>
-                        <span>Table ${order.table_number}</span>
-                    </div>
-                    <div class="detail-group">
-                        <label>Status:</label>
-                        <span class="order-status ${this.getStatusClass(order.status)}">${order.status}</span>
-                    </div>
-                    <div class="detail-group">
-                        <label>Order Time:</label>
-                        <span>${this.formatTime(order.created_at)}</span>
-                    </div>
-                    <div class="detail-group">
-                        <label>Items:</label>
-                        <div class="detail-items">
-                            ${order.items.map(item => `
-                                <div class="detail-item">
-                                    <div class="item-quantity">${item.quantity}x</div>
-                                    <div class="item-info">
-                                        <div class="item-name">${item.menu_name}</div>
-                                        ${item.notes ? `<div class="item-notes">${item.notes}</div>` : ''}
-                                    </div>
-                                </div>
-                            `).join('')}
+                    <div class="order-meta">
+                        <div class="detail-group">
+                            <label>Nomor Meja:</label>
+                            <span>Meja ${order.table && order.table.number ? order.table.number : order.table_id}</span>
                         </div>
+                        <div class="detail-group">
+                            <label>Pelanggan:</label>
+                            <span>${order.customer && order.customer.name ? order.customer.name : `Pelanggan #${order.customer_id}`}</span>
+                        </div>
+                        <div class="detail-group">
+                            <label>Status:</label>
+                            <span class="status-badge ${order.status.toLowerCase()}">${order.status === 'ready' ? 'Siap' : 'Selesai'}</span>
+                        </div>
+                        <div class="detail-group">
+                            <label>Waktu Pemesanan:</label>
+                            <span>${this.formatTime(order.created_at)}</span>
+                        </div>
+                        <div class="detail-group">
+                            <label>Waktu Mulai Memasak:</label>
+                            <span>${this.formatTime(order.start_cooking_time)}</span>
+                        </div>
+                        <div class="detail-group">
+                            <label>Waktu Selesai Memasak:</label>
+                            <span>${this.formatTime(order.finish_cooking_time)}</span>
+                        </div>
+                        <div class="detail-group">
+                            <label>Durasi Memasak:</label>
+                            <span>${this.calculateCookingTime(order)}</span>
+                        </div>
+                        <div class="detail-group">
+                            <label>Total Harga:</label>
+                            <span>Rp ${order.total_amount.toLocaleString('id-ID')}</span>
+                        </div>
+                    </div>
+                    
+                    <h4>Daftar Menu</h4>
+                    <div class="detail-items">
+                        <table class="items-table">
+                            <thead>
+                                <tr>
+                                    <th>Menu</th>
+                                    <th>Jumlah</th>
+                                    <th>Harga</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${order.order_items && order.order_items.map(item => `
+                                    <tr>
+                                        <td>
+                                            <div class="item-name">${item.menu ? item.menu.name : 'Menu tidak ditemukan'}</div>
+                                            ${item.notes ? `<div class="item-notes">${item.notes}</div>` : ''}
+                                        </td>
+                                        <td>${item.quantity}x</td>
+                                        <td>Rp ${item.price.toLocaleString('id-ID')}</td>
+                                        <td>Rp ${(item.price * item.quantity).toLocaleString('id-ID')}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="3" class="total-label">Total</td>
+                                    <td class="total-value">Rp ${order.total_amount.toLocaleString('id-ID')}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -220,20 +381,14 @@ class OrdersPage {
         });
     }
 
-    getStatusClass(status) {
-        const statusClasses = {
-            'pending': 'status-pending',
-            'preparing': 'status-preparing',
-            'ready': 'status-ready'
-        };
-        return statusClasses[status.toLowerCase()] || '';
-    }
-
     onMount() {
+        // Render saat komponen dimount
+        this.render();
+        
         // Subscribe to WebSocket events
         if (window.wsClient) {
             window.addEventListener('orderUpdate', () => {
-                this.render(document.getElementById('content-container'));
+                this.render();
             });
         }
     }

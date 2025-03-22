@@ -77,9 +77,9 @@ class WebSocketClient {
             
             // Dispatch event berdasarkan tipe pesan
             const event = new CustomEvent('orderUpdate', { 
-                detail: message.data 
+                detail: message
             });
-            this.dispatchEvent('orderUpdate', event);
+            window.dispatchEvent(event);
 
             // Show notification jika diperlukan
             if (message.event === 'order_update') {
@@ -95,28 +95,16 @@ class WebSocketClient {
     }
 
     addEventListener(event, callback) {
-        if (!this.eventListeners.has(event)) {
-            this.eventListeners.set(event, new Set());
-        }
-        this.eventListeners.get(event).add(callback);
+        window.addEventListener(event, callback);
     }
 
     removeEventListener(event, callback) {
-        if (this.eventListeners.has(event)) {
-            this.eventListeners.get(event).delete(callback);
-        }
+        window.removeEventListener(event, callback);
     }
 
     dispatchEvent(event, data) {
-        if (this.eventListeners.has(event)) {
-            this.eventListeners.get(event).forEach(callback => {
-                try {
-                    callback(data);
-                } catch (error) {
-                    console.error('Error in event listener:', error);
-                }
-            });
-        }
+        const customEvent = new CustomEvent(event, { detail: data });
+        window.dispatchEvent(customEvent);
     }
 
     showNotification(notification) {

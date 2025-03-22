@@ -6,6 +6,9 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
+    // Load user profile
+    loadUserProfile();
+
     // Get elements
     const sidebar = document.querySelector('.sidebar');
     const toggleButtons = document.querySelectorAll('.sidebar-toggle-btn');
@@ -82,9 +85,46 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Handle logout
-    document.getElementById('logout-button')?.addEventListener('click', () => {
-        localStorage.removeItem('token');
-        window.location.href = '/Frontend/auth/login/index.html';
+    document.getElementById('logout-button')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        // Tampilkan modal konfirmasi logout
+        const logoutModal = document.getElementById('logout-modal');
+        logoutModal.classList.add('active');
+    });
+
+    // Handle konfirmasi logout
+    document.getElementById('confirm-logout')?.addEventListener('click', () => {
+        // Tambahkan efek animasi sebelum logout
+        const modalContainer = document.querySelector('#logout-modal .modal-container');
+        
+        // Animasi menghilang
+        modalContainer.style.transform = 'scale(0.8)';
+        modalContainer.style.opacity = '0';
+        
+        // Tunggu sebentar untuk animasi
+        setTimeout(() => {
+            document.getElementById('logout-modal').classList.remove('active');
+            // Hapus token dan redirect ke halaman login
+            localStorage.removeItem('token');
+            window.location.href = '/Frontend/auth/login/index.html';
+        }, 300);
+    });
+
+    // Handle pembatalan logout
+    document.getElementById('cancel-logout')?.addEventListener('click', () => {
+        // Animasi menutup modal
+        const modalContainer = document.querySelector('#logout-modal .modal-container');
+        modalContainer.style.transform = 'scale(0.8)';
+        modalContainer.style.opacity = '0';
+        
+        // Tunggu sebentar untuk animasi
+        setTimeout(() => {
+            document.getElementById('logout-modal').classList.remove('active');
+            // Reset style setelah modal tertutup
+            setTimeout(() => {
+                modalContainer.removeAttribute('style');
+            }, 300);
+        }, 300);
     });
 
     // Add resize event listener
@@ -104,4 +144,64 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Set initial sidebar state based on screen size
     handleResize();
-}); 
+});
+
+// Function to load user profile from server
+async function loadUserProfile() {
+    try {
+        const token = localStorage.getItem('token');
+        
+        // Fetch profile data from server
+        const response = await fetch('http://localhost:8080/admin/profile', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to fetch profile data');
+        }
+        
+        const data = await response.json();
+        
+        if (data.status && data.data) {
+            const user = data.data;
+            
+            // Update profile information in header
+            const userProfileDiv = document.querySelector('.user-profile');
+            if (userProfileDiv) {
+                userProfileDiv.innerHTML = `
+                    <div class="user-avatar">
+                        <img src="assets/img/chef.png" alt="Chef Profile">
+                    </div>
+                    <div class="user-info">
+                        <span class="user-name">${user.name || 'Chef'}</span>
+                        <span class="user-role">${getUserRole(user.role)}</span>
+                    </div>
+                `;
+            }
+            
+            // Also update sidebar header if exists
+            const sidebarHeader = document.querySelector('.sidebar-header h2');
+            if (sidebarHeader) {
+                sidebarHeader.textContent = `Dapur ${user.name || 'Chef'}`;
+            }
+        }
+    } catch (error) {
+        console.error('Error loading user profile:', error);
+    }
+}
+
+// Helper function to format role name
+function getUserRole(role) {
+    switch (role) {
+        case 'chef':
+            return 'Chef Dapur';
+        case 'head_chef':
+            return 'Kepala Chef';
+        case 'staff':
+            return 'Staff Dapur';
+        default:
+            return 'Kitchen Staff';
+    }
+} 

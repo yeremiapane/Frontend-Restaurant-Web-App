@@ -73,6 +73,9 @@
 }
 
 .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 1.5rem;
 }
 
@@ -80,6 +83,39 @@
     font-size: 1.25rem;
     color: var(--text-color);
     font-weight: 600;
+}
+
+.section-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.filter-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border-color);
+    background: var(--background-color);
+    border-radius: 6px;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.filter-btn:hover {
+    background: var(--hover-color);
+    color: var(--primary-color);
+}
+
+.filter-btn.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
 }
 
 .view-all {
@@ -95,34 +131,61 @@
 }
 
 .orders-table {
+    width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    margin-top: 1rem;
 }
 
-table {
+.orders-table table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: fixed;
 }
 
-th {
-    text-align: left;
-    padding: 0.75rem 1rem;
-    font-size: 0.875rem;
+.orders-table thead th {
+    background-color: var(--background-color);
+    padding: 1rem;
     font-weight: 500;
     color: var(--text-muted);
-    border-bottom: 1px solid var(--border-color);
-    background: var(--background-color);
+    text-align: left;
 }
 
-td {
+.orders-table tbody td {
     padding: 1rem;
-    font-size: 0.875rem;
-    color: var(--text-color);
-    border-bottom: 1px solid var(--border-color);
+    border-top: 1px solid var(--border-color);
 }
 
-tr:hover {
+.orders-table th:nth-child(1), .orders-table td:nth-child(1) { width: 7%; }
+.orders-table th:nth-child(2), .orders-table td:nth-child(2) { width: 12%; }
+.orders-table th:nth-child(3), .orders-table td:nth-child(3) { width: 15%; }
+.orders-table th:nth-child(4), .orders-table td:nth-child(4) { width: 10%; }
+.orders-table th:nth-child(5), .orders-table td:nth-child(5) { width: 25%; }
+.orders-table th:nth-child(6), .orders-table td:nth-child(6) { width: 15%; }
+.orders-table th:nth-child(7), .orders-table td:nth-child(7) { width: 20%; }
+
+.order-row {
+    transition: background-color 0.2s;
+}
+
+.order-row:hover {
     background-color: var(--hover-color);
+}
+
+.order-row.pending {
+    background-color: rgba(254, 243, 199, 0.1);
+}
+
+.order-row.preparing {
+    background-color: rgba(219, 234, 254, 0.1);
+}
+
+.order-row.ready {
+    background-color: rgba(76, 175, 80, 0.05);
+    border-left: 3px solid #4caf50;
+    opacity: 0.8;
+    transition: all 0.3s ease;
 }
 
 .status {
@@ -211,4 +274,1450 @@ tr:hover {
         padding: 0.375rem 0.75rem;
         font-size: 0.75rem;
     }
+}
+
+/* New styles for Chef Dashboard */
+.table-number {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+}
+
+.table-number i {
+    color: var(--primary-color);
+}
+
+.order-time {
+    display: flex;
+    flex-direction: column;
+}
+
+.time {
+    font-weight: 500;
+}
+
+.time-ago {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.order-menu-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    max-width: 250px;
+}
+
+.menu-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.menu-count {
+    background-color: var(--primary-color);
+    color: white;
+    font-size: 0.75rem;
+    padding: 0.125rem 0.375rem;
+    border-radius: 12px;
+    min-width: 2rem;
+    text-align: center;
+}
+
+.menu-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.875rem;
+}
+
+/* Styles for popular items */
+.popular-items-container {
+    margin-bottom: 2rem;
+}
+
+.popular-items-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+.popular-item-card {
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.2s;
+}
+
+.popular-item-card:hover {
+    box-shadow: var(--shadow);
+    transform: translateY(-2px);
+}
+
+.popular-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: var(--background-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.popular-item-header h3 {
+    font-size: 1rem;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+}
+
+.popular-item-count {
+    background: var(--primary-color);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.orders-for-item {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-height: 300px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-color) transparent;
+}
+
+.orders-for-item::-webkit-scrollbar {
+    width: 6px;
+}
+
+.orders-for-item::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.orders-for-item::-webkit-scrollbar-thumb {
+    background-color: var(--border-color);
+    border-radius: 6px;
+}
+
+.more-orders {
+    text-align: center;
+    padding: 0.5rem;
+    background: var(--background-color);
+    border-radius: 4px;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.order-for-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    border-radius: 6px;
+    border-left: 3px solid var(--border-color);
+    background: var(--background-color);
+    font-size: 0.875rem;
+}
+
+.order-for-item.pending {
+    border-left-color: #ca8a04;
+}
+
+.order-for-item.preparing {
+    border-left-color: #ea580c;
+}
+
+.table-tag, .order-id-tag, .quantity-tag {
+    padding: 0.125rem 0.375rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+}
+
+.table-tag {
+    background: rgba(59, 130, 246, 0.1);
+    color: #1d4ed8;
+}
+
+.order-id-tag {
+    color: var(--text-muted);
+}
+
+.quantity-tag {
+    background: var(--primary-color);
+    color: white;
+    min-width: 2rem;
+    text-align: center;
+}
+
+/* New grid layout for orders */
+.orders-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.order-card {
+    background: var(--surface-color);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+
+.order-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+.order-card.pending {
+    border-left: 4px solid #ca8a04;
+}
+
+.order-card.preparing {
+    border-left: 4px solid #ea580c;
+}
+
+.order-card.ready {
+    border-left: 4px solid #16a34a;
+}
+
+.order-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: var(--background-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.order-id {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+}
+
+.order-card-body {
+    padding: 1rem;
+}
+
+.order-meta-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.meta-item i {
+    color: var(--primary-color);
+}
+
+.order-items-preview {
+    margin-bottom: 1rem;
+}
+
+.more-items {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-align: center;
+    padding: 0.25rem;
+    background: var(--background-color);
+    border-radius: 4px;
+    margin-top: 0.5rem;
+}
+
+.progress-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.progress-text {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-align: right;
+}
+
+.order-card-footer {
+    display: flex;
+    gap: 0.5rem;
+    padding: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+/* Table actions */
+.table-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.btn-view {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    background-color: var(--background-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.875rem;
+    gap: 0.5rem;
+    width: auto;
+    height: auto;
+    white-space: nowrap;
+}
+
+.btn-view:hover {
+    background-color: var(--hover-color);
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+/* Mini buttons for item actions */
+.mini-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    border: none;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.mini-btn.prepare {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.mini-btn.prepare:hover {
+    background-color: var(--secondary-color);
+}
+
+.mini-btn.ready {
+    background-color: #10B981;
+    color: white;
+}
+
+.mini-btn.ready:hover {
+    background-color: #059669;
+}
+
+/* Enhanced Modal Styling */
+.details-modal {
+    max-width: 650px;
+    width: 90%;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: var(--background-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-header h3 {
+    font-size: 1.125rem;
+    margin: 0;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.order-summary {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.order-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.items-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.item-card {
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    overflow: hidden;
+    padding: 1rem;
+}
+
+.item-card.pending {
+    border-left: 3px solid #ca8a04;
+}
+
+.item-card.preparing {
+    border-left: 3px solid #ea580c;
+}
+
+.item-card.ready {
+    border-left: 3px solid #16a34a;
+    opacity: 0.7;
+}
+
+.item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+}
+
+.item-name {
+    font-weight: 500;
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.item-quantity {
+    background: var(--primary-color);
+    color: white;
+    padding: 0.125rem 0.375rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+}
+
+.item-notes {
+    margin: 0.75rem 0;
+    font-size: 0.875rem;
+    background: rgba(251, 191, 36, 0.1);
+    padding: 0.5rem;
+    border-radius: 4px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+.item-notes i {
+    color: #d97706;
+}
+
+.item-completed {
+    font-size: 0.875rem;
+    color: #16a34a;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
+    background: var(--background-color);
+    border-top: 1px solid var(--border-color);
+}
+
+.btn {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn i {
+    font-size: 1rem;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    background: var(--secondary-color);
+}
+
+.btn-success {
+    background: #10B981;
+    color: white;
+    border: none;
+}
+
+.btn-success:hover {
+    background: #059669;
+}
+
+.btn-secondary {
+    background: var(--background-color);
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    background: var(--hover-color);
+    color: var(--text-color);
+}
+
+/* Responsive styles for mobile */
+@media (max-width: 768px) {
+    .popular-items-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .orders-table th:nth-child(2),
+    .orders-table td:nth-child(2),
+    .orders-table th:nth-child(6),
+    .orders-table td:nth-child(6) {
+        display: none;
+    }
+    
+    .order-for-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .order-item-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .items-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .modal-footer {
+        flex-direction: column;
+    }
+    
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .table-actions {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .btn-view {
+        width: 100%;
+        margin-bottom: 0.5rem;
+        justify-content: center;
+    }
+}
+
+/* Item status styling */
+.item-card.ready {
+    opacity: 0.7;
+}
+
+.item-actions {
+    margin-top: 0.5rem;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.menu-ready-badge {
+    margin-left: 0.5rem;
+    color: #10b981;
+}
+
+.menu-group.ready {
+    opacity: 0.7;
+}
+
+/* Status info with progress bar */
+.status-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.progress-bar {
+    height: 6px;
+    width: 100%;
+    background-color: var(--border-color);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    background-color: var(--primary-color);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+/* Perbaikan Modal */
+.item-status-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.75rem;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+}
+
+.order-progress {
+    margin-top: 1rem;
+}
+
+/* Perbaikan untuk modal */
+.modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    overflow-y: auto;
+    padding: 2rem 1rem;
+}
+
+.modal-content {
+    background: var(--surface-color);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    position: relative;
+    margin: auto;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.close-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.25rem;
+    line-height: 1;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-btn:hover {
+    color: var(--primary-color);
+}
+
+/* Styles untuk notes modal kecil */
+.notes-tag {
+    background-color: rgba(251, 191, 36, 0.1);
+    color: #d97706;
+    padding: 0.125rem 0.375rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.notes-tag:hover {
+    background-color: rgba(251, 191, 36, 0.2);
+    color: #b45309;
+}
+
+.notes-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.notes-modal.show {
+    opacity: 1;
+}
+
+.notes-modal.fade-out {
+    opacity: 0;
+}
+
+.notes-modal-content {
+    background: var(--surface-color);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    width: 320px;
+    max-width: 90%;
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+    animation: notesModalSlideIn 0.3s forwards;
+}
+
+@keyframes notesModalSlideIn {
+    to {
+        transform: translateY(0);
+    }
+}
+
+.notes-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--background-color);
+    border-radius: 8px 8px 0 0;
+}
+
+.notes-modal-header h4 {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--text-color);
+}
+
+.notes-modal-body {
+    padding: 1rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.notes-icon {
+    color: #d97706;
+    font-size: 1.25rem;
+    margin-top: 0.25rem;
+}
+
+.notes-modal-body p {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--text-color);
+    flex: 1;
+}
+
+.notes-tag.small {
+    padding: 0.125rem 0.25rem;
+    margin-left: 0.25rem;
+    font-size: 0.7rem;
+    vertical-align: middle;
+}
+
+.note-item {
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.note-item:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.note-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.quantity-badge {
+    background: var(--primary-color);
+    color: white;
+    padding: 0.125rem 0.375rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+}
+
+.note-content {
+    background: rgba(251, 191, 36, 0.1);
+    padding: 0.5rem;
+    border-radius: 4px;
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.notes-collection {
+    width: 100%;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.animate-in {
+    animation: fadeIn 0.4s ease-out forwards;
+    opacity: 0;
+}
+
+.animate-fade-in {
+    animation: scaleIn 0.3s ease-out forwards;
+    opacity: 0;
+}
+
+.order-row.pending, .order-row.paid, .order-row.pending_payment {
+    transition: background-color 0.3s ease;
+}
+
+.order-row.in_progress, .order-row.preparing {
+    transition: background-color 0.3s ease;
+}
+
+.order-for-item.pending, .order-for-item.paid {
+    transition: all 0.3s ease;
+}
+
+.order-for-item.preparing {
+    transition: all 0.3s ease;
+}
+
+.order-for-item.ready {
+    transition: all 0.3s ease;
+}
+
+.progress {
+    transition: width 0.5s ease-in-out;
+}
+
+.btn-view:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-action:hover {
+    animation: pulse 0.3s ease-in-out;
+}
+
+.notes-modal {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.notes-modal.show {
+    opacity: 1;
+}
+
+.notes-modal.fade-out {
+    opacity: 0;
+}
+
+.modal {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+.modal-content {
+    animation: scaleIn 0.3s ease-out forwards;
+}
+
+.table-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.btn-view {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 12px;
+    background-color: #2979ff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-view i {
+    margin-right: 4px;
+}
+
+.btn-action {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-action.prepare {
+    background-color: #ff9800;
+}
+
+.btn-action.ready {
+    background-color: #4caf50;
+}
+
+/* Notes modal styles */
+.notes-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1100;
+}
+
+.notes-modal-content {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.notes-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.notes-modal-header h4 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+}
+
+.notes-modal-header .close-btn {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #999;
+}
+
+.notes-modal-body {
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.notes-collection {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.note-item {
+    background-color: #f9f9f9;
+    border-radius: 6px;
+    padding: 12px 15px;
+    border-left: 4px solid #2979ff;
+}
+
+.note-item-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.note-item-header strong {
+    font-weight: 600;
+    color: #333;
+}
+
+.quantity-badge {
+    background-color: #e3f2fd;
+    color: #1565c0;
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.note-content {
+    margin: 0;
+    color: #555;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Additional button hover effects */
+.mini-btn:hover {
+    transform: scale(1.1);
+}
+
+/* Animasi untuk pesanan yang selesai */
+@keyframes itemComplete {
+    0% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    50% {
+        opacity: 0.8;
+        transform: translateX(10px);
+        background-color: rgba(34, 197, 94, 0.2);
+        border-color: #10b981;
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+}
+
+@keyframes orderComplete {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    50% {
+        opacity: 0.9;
+        background-color: rgba(34, 197, 94, 0.1);
+    }
+    75% {
+        opacity: 0.5;
+        transform: translateY(-10px);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+}
+
+.item-complete-animation {
+    animation: itemComplete 0.6s ease-out forwards;
+}
+
+.order-complete-animation {
+    animation: orderComplete 0.8s ease-out forwards;
+}
+
+/* Menyembunyikan pesanan yang sudah selesai */
+.order-row.ready {
+    background-color: rgba(76, 175, 80, 0.05);
+    border-left: 3px solid #4caf50;
+    opacity: 0.8;
+}
+
+/* Additional animations for status changes */
+.order-for-item.pending:hover,
+.order-for-item.preparing:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.order-for-item.pending:active,
+.order-for-item.preparing:active {
+    transform: translateY(-1px);
+}
+
+/* Highlight animation for new orders */
+@keyframes pulse-attention {
+    0% {
+        box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(234, 179, 8, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(234, 179, 8, 0);
+    }
+}
+
+.order-row.pending:not(:hover) {
+    animation: pulse-attention 2s infinite;
+}
+
+/* Visual feedback on order status change */
+.status {
+    position: relative;
+    overflow: hidden;
+}
+
+.status::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.3);
+    opacity: 0;
+}
+
+.status.status-change::after {
+    animation: status-flash 0.5s ease-out;
+}
+
+@keyframes status-flash {
+    0% {
+        opacity: 0.8;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+.mini-btn.prepare:active,
+.mini-btn.ready:active,
+.btn-action.prepare:active,
+.btn-action.ready:active {
+    transform: scale(0.95);
+}
+
+/* Tambahkan fading untuk tab 'ready' */
+.filter-btn[onclick*="'ready'"] {
+    position: relative;
+}
+
+.filter-btn[onclick*="'ready'"]:not(.active)::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 8px;
+    height: 8px;
+    background: #10b981;
+    border-radius: 50%;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.3;
+    }
+}
+
+/* Animasi spinner */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.fa-spinner.fa-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Tambahkan style untuk tab "Siap" */
+.filter-btn[onclick*="'ready'"] {
+  position: relative;
+}
+
+.filter-btn[onclick*="'ready'"].active::after {
+  content: attr(data-count);
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #4caf50;
+  color: white;
+  font-size: 10px;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Style tambahan untuk data 24 jam */
+.order-row.ready {
+  background-color: rgba(76, 175, 80, 0.05);
+  border-left: 3px solid #4caf50;
+}
+
+.time-ago {
+  font-weight: normal;
+  font-style: italic;
+}
+
+/* Menonaktifkan tombol */
+button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Perbaikan untuk mencegah multiple click */
+.mini-btn, .btn-action, .btn {
+  pointer-events: auto;
+}
+
+.mini-btn:disabled, .btn-action:disabled, .btn:disabled {
+  pointer-events: none;
+}
+
+/* Memperbaiki gaya untuk tab "Siap" */
+.filter-buttons .filter-btn[onclick*="'ready'"] {
+  position: relative;
+  border: 1px solid #4caf50;
+  color: #4caf50;
+}
+
+.filter-buttons .filter-btn[onclick*="'ready'"].active {
+  background-color: #4caf50;
+  color: white;
+}
+
+.filter-buttons .filter-btn[onclick*="'ready'"]:hover:not(.active) {
+  background-color: rgba(76, 175, 80, 0.1);
+}
+
+/* Keterangan 24 jam */
+.section-subtitle {
+  margin-bottom: 10px;
+  color: #666;
+  font-style: italic;
+  font-size: 0.9em;
+}
+
+/* Styling untuk filter berdasarkan waktu */
+.order-time .time {
+  font-weight: bold;
+}
+
+.order-time .time-ago {
+  display: block;
+  font-size: 0.8em;
+  color: #666;
+}
+
+/* Untuk pesanan yang sudah selesai */
+.order-row.ready .order-menu-list .menu-group {
+  color: #4caf50;
+}
+
+.order-row.ready .table-number {
+  color: #4caf50;
+}
+
+.order-row.ready .time-ago {
+  color: #4caf50;
+}
+
+/* Fix untuk event propagation */
+.notes-tag, .btn-view, .btn-action, .mini-btn {
+  position: relative;
+  z-index: 10;
+}
+
+/* Fix untuk tombol terklik bersama */
+.order-item-actions {
+  position: relative;
+  z-index: 20;
+}
+
+/* Meningkatkan z-index di modal juga */
+.modal-content button {
+  position: relative;
+  z-index: 30;
+}
+
+/* Spinner untuk tombol */
+.fa-spinner {
+  display: inline-block;
+}
+
+/* Animasi untuk menandai pesanan yang baru selesai */
+@keyframes readyHighlight {
+  0% {
+    background-color: rgba(76, 175, 80, 0.3);
+  }
+  50% {
+    background-color: rgba(76, 175, 80, 0.2);
+  }
+  100% {
+    background-color: rgba(76, 175, 80, 0.05);
+  }
+}
+
+/* Tambahkan class untuk pesanan yang baru selesai */
+.order-row.new-completed {
+  animation: readyHighlight 2s ease-out;
+}
+
+/* Styling untuk pesanan yang sudah ready */
+.order-for-item.ready.dimmed {
+  opacity: 0.6;
+  background-color: rgba(76, 175, 80, 0.05);
+  border-left-color: #4caf50;
+}
+
+.completed-orders-divider {
+  width: 100%;
+  text-align: center;
+  border-bottom: 1px dashed var(--border-color);
+  margin: 10px 0;
+  line-height: 0.1em;
+  margin-bottom: 15px;
+}
+
+.completed-orders-divider span {
+  background: var(--surface-color);
+  padding: 0 10px;
+  font-size: 0.8em;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.completed-badge {
+  color: #4caf50;
+  font-size: 0.9em;
+}
+
+.orders-for-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 300px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+}
+
+/* Hover state untuk pesanan yang sudah dimmed */
+.order-for-item.dimmed:hover {
+  opacity: 0.8;
+}
+
+/* Styling untuk chef badge */
+.chef-status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  background-color: var(--background-color);
+  color: var(--text-muted);
+}
+
+.chef-status-badge.my-chef {
+  background-color: rgba(25, 118, 210, 0.1);
+  color: #1976d2;
+  border-left: 3px solid #1976d2;
+}
+
+.chef-status-badge.other-chef {
+  background-color: rgba(211, 47, 47, 0.1);
+  color: #d32f2f;
+  border-left: 3px solid #d32f2f;
+}
+
+.chef-status-badge i {
+  margin-right: 5px;
+}
+
+/* Order locked badge */
+.order-locked-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  background-color: rgba(211, 47, 47, 0.1);
+  color: #d32f2f;
+}
+
+.order-locked-badge i {
+  margin-right: 5px;
+}
+
+/* Styling untuk kolom chef di tabel */
+.orders-table th:nth-child(6), .orders-table td:nth-child(6) { 
+  width: 15%; 
+}
+
+/* Penyesuaian lebar tombol aksi */
+.orders-table th:nth-child(7), .orders-table td:nth-child(7) { 
+  width: 20%; 
 } 

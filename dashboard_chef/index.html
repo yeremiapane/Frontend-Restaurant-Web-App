@@ -20,7 +20,7 @@
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <h2>Chef Dashboard</h2>
+                <h2>Dapur Chef</h2>
             </div>
             
             <!-- Menu Navigation -->
@@ -62,9 +62,11 @@
                         </div>
                     </div>
                     <div class="user-profile">
-                        <img src="assets/chef-avatar.png" alt="Chef Profile">
+                        <div class="user-avatar">
+                            <img src="assets/img/chef.png" alt="Chef Profile">
+                        </div>
                         <div class="user-info">
-                            <span class="user-name">Chef John</span>
+                            <span class="user-name">Memuat...</span>
                             <span class="user-role">Kitchen Staff</span>
                         </div>
                     </div>
@@ -78,6 +80,25 @@
     </div>
 
     <div class="sidebar-overlay"></div>
+    
+    <!-- Modal Konfirmasi Logout -->
+    <div class="modal-overlay" id="logout-modal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <h3>Konfirmasi Keluar</h3>
+                </div>
+            </div>
+            <div class="modal-content">
+                <p>Apakah Anda yakin ingin keluar dari sistem?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-cancel" id="cancel-logout">Batal</button>
+                <button class="modal-btn modal-btn-confirm" id="confirm-logout">Ya, Keluar</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Scripts -->
     <script src="js/websocket.js"></script>
