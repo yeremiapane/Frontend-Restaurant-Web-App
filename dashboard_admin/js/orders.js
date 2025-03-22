@@ -1,12 +1,43 @@
+// Register the orders page with the router - dipindahkan ke atas
+(function() {
+    // Mencoba mendaftarkan setiap 100ms sampai router siap
+    const registerRoute = function() {
+        if (window.router) {
+            console.log('Registering orders route...');
+            window.router.addRoute('orders', async () => {
+                if (!window.ordersPage) {
+                    console.log('Creating OrdersPage instance');
+                    window.ordersPage = new OrdersPage();
+                }
+                await window.ordersPage.initialize();
+            });
+        } else {
+            console.log('Router not ready yet, retrying...');
+            setTimeout(registerRoute, 100);
+        }
+    };
+    
+    // Mulai proses pendaftaran
+    registerRoute();
+})();
+
 class OrdersPage {
     constructor() {
         this.orders = [];
+        this.filteredOrders = [];
         this.tables = [];
         this.menus = [];
         this.customers = [];
         this.initialized = false;
+        this.dateFilter = {
+            startDate: null,
+            endDate: null,
+            period: 'all' // 'all', 'today', 'week', 'month', 'custom'
+        };
         // Register this instance with the router
-        window.router.registerPageInstance('orders', this);
+        if (window.router) {
+            window.router.registerPageInstance('orders', this);
+        }
     }
 
     async initialize() {
@@ -49,6 +80,54 @@ class OrdersPage {
         if (newOrderBtn) {
             newOrderBtn.addEventListener('click', () => this.showNewOrderModal());
         }
+
+        // Setup date filter events
+        const periodFilter = document.getElementById('period-filter');
+        const statusFilter = document.getElementById('status-filter');
+        const customDateRange = document.getElementById('custom-date-range');
+        const startDateInput = document.getElementById('start-date');
+        const endDateInput = document.getElementById('end-date');
+        const applyDateFilterBtn = document.getElementById('apply-date-filter');
+
+        if (periodFilter) {
+            periodFilter.addEventListener('change', (e) => {
+                const period = e.target.value;
+                this.dateFilter.period = period;
+                
+                if (period === 'custom') {
+                    customDateRange.style.display = 'flex';
+                } else {
+                    customDateRange.style.display = 'none';
+                    this.applyDateFilter(period);
+                }
+            });
+        }
+
+        if (statusFilter) {
+            statusFilter.addEventListener('change', (e) => {
+                this.applyStatusFilter(e.target.value);
+            });
+        }
+
+        if (applyDateFilterBtn) {
+            applyDateFilterBtn.addEventListener('click', () => {
+                if (startDateInput.value && endDateInput.value) {
+                    this.dateFilter.startDate = new Date(startDateInput.value);
+                    this.dateFilter.endDate = new Date(endDateInput.value);
+                    this.applyDateFilter('custom');
+                } else {
+                    this.showNotification('Please select both start and end dates', 'error');
+                }
+            });
+        }
+
+        // Initialize date inputs with today's date
+        if (startDateInput && endDateInput) {
+            const today = new Date();
+            const formattedDate = this.formatDateForInput(today);
+            startDateInput.value = formattedDate;
+            endDateInput.value = formattedDate;
+        }
     }
 
     setupWebSocketListeners() {
@@ -69,6 +148,22 @@ class OrdersPage {
             console.log('Received menu update:', event.detail);
             await this.loadMenus(); // Reload menu items
         });
+
+        // Listen for payment updates - mereka mungkin memengaruhi status pesanan
+        window.addEventListener('paymentUpdate', async (event) => {
+            console.log('Received payment update:', event.detail);
+            // Memuat ulang semua pesanan untuk memastikan konsistensi data
+            await this.loadOrders();
+        });
+
+        // Listen for stats updates - dapat menjadi sinyal untuk memperbarui data
+        window.addEventListener('statsUpdate', async (event) => {
+            console.log('Received stats update that may affect orders:', event.detail);
+            // Periksa jika perlu menyegarkan data order
+            if (event.detail.order_stats) {
+                await this.loadOrders();
+            }
+        });
     }
 
     async handleOrderUpdate(data) {
@@ -76,15 +171,46 @@ class OrdersPage {
             const existingOrderIndex = this.orders.findIndex(order => order.id === data.id);
             
             if (data.action === 'create') {
-                await this.loadOrders();
+                await this.loadOrders(); // Memuat ulang dan mengurutkan
+                
+                // Reapply current filters
+                const periodFilter = document.getElementById('period-filter');
+                const statusFilter = document.getElementById('status-filter');
+                if (periodFilter && statusFilter) {
+                    this.applyDateFilter(periodFilter.value);
+                    this.applyStatusFilter(statusFilter.value);
+                }
+                
                 this.showNotification('Pesanan baru diterima!');
             } else if (data.action === 'update' && existingOrderIndex !== -1) {
                 // Refresh specific order data
                 await this.refreshOrderData(data.id);
+                // Re-sort orders to maintain ordering
+                this.orders.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                
+                // Reapply current filters
+                const periodFilter = document.getElementById('period-filter');
+                const statusFilter = document.getElementById('status-filter');
+                if (periodFilter && statusFilter) {
+                    this.applyDateFilter(periodFilter.value);
+                    this.applyStatusFilter(statusFilter.value);
+                } else {
+                    this.updateOrdersTable();
+                }
+                
                 this.showNotification('Pesanan diperbarui');
             } else if (data.action === 'delete' && existingOrderIndex !== -1) {
                 this.orders.splice(existingOrderIndex, 1);
-                this.updateOrdersTable();
+                
+                // Reapply current filters
+                const periodFilter = document.getElementById('period-filter');
+                const statusFilter = document.getElementById('status-filter');
+                if (periodFilter && statusFilter) {
+                    this.applyDateFilter(periodFilter.value);
+                    this.applyStatusFilter(statusFilter.value);
+                } else {
+                    this.updateOrdersTable();
+                }
                 
                 // Close modal if open
                 const openModal = document.querySelector(`.order-detail-modal[data-order-id="${data.id}"]`);
@@ -93,6 +219,17 @@ class OrdersPage {
                 }
                 
                 this.showNotification('Pesanan dihapus');
+            } else {
+                // Jika tidak ada kondisi yang terpenuhi, muat ulang semua data untuk memastikan sinkronisasi
+                await this.loadOrders();
+                
+                // Reapply current filters
+                const periodFilter = document.getElementById('period-filter');
+                const statusFilter = document.getElementById('status-filter');
+                if (periodFilter && statusFilter) {
+                    this.applyDateFilter(periodFilter.value);
+                    this.applyStatusFilter(statusFilter.value);
+                }
             }
         } catch (error) {
             console.error('Error handling order update:', error);
@@ -117,7 +254,7 @@ class OrdersPage {
 
     async loadOrders() {
         try {
-            const token = localStorage.getItem('auth_token');
+            const token = localStorage.getItem('token');
             const response = await fetch('http://localhost:8080/admin/orders', {
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -129,7 +266,14 @@ class OrdersPage {
             
             const result = await response.json();
             if (result.status && result.data) {
-                this.orders = result.data;
+                // Sort orders by created_at date (newest first)
+                this.orders = result.data.sort((a, b) => {
+                    return new Date(b.created_at) - new Date(a.created_at);
+                });
+                
+                // Initialize filtered orders with all orders
+                this.filteredOrders = [...this.orders];
+                
                 this.updateOrdersTable();
             }
         } catch (error) {
@@ -140,7 +284,7 @@ class OrdersPage {
 
     async loadTables() {
         try {
-            const token = localStorage.getItem('auth_token');
+            const token = localStorage.getItem('token');
             const response = await fetch('http://localhost:8080/admin/tables', {
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -161,7 +305,7 @@ class OrdersPage {
 
     async loadMenus() {
         try {
-            const token = localStorage.getItem('auth_token');
+            const token = localStorage.getItem('token');
             const response = await fetch('http://localhost:8080/menus', {
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -183,7 +327,7 @@ class OrdersPage {
 
     async loadCustomers() {
         try {
-            const token = localStorage.getItem('auth_token');
+            const token = localStorage.getItem('token');
             const response = await fetch('http://localhost:8080/admin/customers', {
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -207,7 +351,8 @@ class OrdersPage {
         const tableBody = document.getElementById('orders-table-body');
         if (!tableBody) return;
 
-        tableBody.innerHTML = this.orders.map(order => `
+        // Use filtered orders instead of all orders
+        tableBody.innerHTML = this.filteredOrders.map(order => `
             <tr class="order-row" data-order-id="${order.id}">
                 <td>Order #${order.id}</td>
                 <td>Table ${order.table ? order.table.number : 'N/A'}</td>
@@ -283,7 +428,7 @@ class OrdersPage {
 
     async updateOrderStatus(orderId, status) {
         try {
-            const token = localStorage.getItem('auth_token');
+            const token = localStorage.getItem('token');
             const response = await fetch(`http://localhost:8080/admin/orders/${orderId}`, {
                 method: 'PUT',
                 headers: {
@@ -323,7 +468,7 @@ class OrdersPage {
 
     async processPayment(orderId) {
         try {
-            const token = localStorage.getItem('auth_token');
+            const token = localStorage.getItem('token');
             const updateResponse = await fetch(`http://localhost:8080/admin/orders/${orderId}`, {
                 method: 'PUT',
                 headers: {
@@ -349,7 +494,7 @@ class OrdersPage {
 
     async refreshOrderData(orderId) {
         try {
-            const token = localStorage.getItem('auth_token');
+            const token = localStorage.getItem('token');
             const response = await fetch(`http://localhost:8080/admin/orders/${orderId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -367,6 +512,13 @@ class OrdersPage {
                 const orderIndex = this.orders.findIndex(order => order.id === orderId);
                 if (orderIndex !== -1) {
                     this.orders[orderIndex] = result.data;
+                    // Re-sort orders to maintain newest first order
+                    this.orders.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                    this.updateOrdersTable();
+                } else {
+                    // If order not found in the array, add it and re-sort
+                    this.orders.push(result.data);
+                    this.orders.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
                     this.updateOrdersTable();
                 }
 
@@ -383,7 +535,7 @@ class OrdersPage {
 
     async viewOrderDetails(orderId) {
         try {
-            const token = localStorage.getItem('auth_token');
+            const token = localStorage.getItem('token');
             const response = await fetch(`http://localhost:8080/admin/orders/${orderId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -612,29 +764,58 @@ class OrdersPage {
             <div class="orders-page">
                 <div class="page-header">
                     <h2>Orders Management</h2>
+                    <div class="filter-container">
+                        <div class="date-filter">
+                            <select id="period-filter" class="filter-select">
+                                <option value="all">All Time</option>
+                                <option value="today">Today</option>
+                                <option value="week">Last 7 Days</option>
+                                <option value="month">This Month</option>
+                                <option value="custom">Custom Range</option>
+                            </select>
+                            <div id="custom-date-range" class="custom-date-range" style="display: none;">
+                                <input type="date" id="start-date" class="date-input">
+                                <span>to</span>
+                                <input type="date" id="end-date" class="date-input">
+                                <button id="apply-date-filter" class="filter-btn">Apply</button>
+                            </div>
+                        </div>
+                        <div class="status-filter">
+                            <select id="status-filter" class="filter-select">
+                                <option value="all">All Status</option>
+                                <option value="pending_payment">Pending Payment</option>
+                                <option value="paid">Paid</option>
+                                <option value="in_progress">In Progress</option>
+                                <option value="ready">Ready</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                        </div>
+                    </div>
                     <button id="new-order-btn" class="btn-primary">
                         <i class="fas fa-plus"></i> New Order
                     </button>
                 </div>
-                <div class="orders-table-container">
-                    <div class="orders-table-wrapper">
-                        <table class="orders-table">
-                            <thead>
-                                <tr>
-                                    <th>Order ID</th>
-                                    <th>Table</th>
-                                    <th>Items</th>
-                                    <th>Notes</th>
-                                    <th>Total</th>
-                                    <th>Status</th>
-                                    <th>Created At</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="orders-table-body">
-                                <!-- Orders will be loaded here -->
-                            </tbody>
-                        </table>
+                <div class="orders-container">
+                    <div class="orders-table-container">
+                        <div class="orders-table-scroll">
+                            <table class="orders-table">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Table</th>
+                                        <th>Items</th>
+                                        <th>Notes</th>
+                                        <th>Total</th>
+                                        <th>Status</th>
+                                        <th>Created At</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="orders-table-body">
+                                    <!-- Orders will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -814,7 +995,7 @@ class OrdersPage {
         console.log('Total amount:', totalAmount);
 
         try {
-            const token = localStorage.getItem('auth_token');
+            const token = localStorage.getItem('token');
             
             // Buat customer baru dengan table_id dan session_key
             const sessionKey = Math.random().toString(36).substring(2, 15);
@@ -949,12 +1130,87 @@ class OrdersPage {
             document.body.removeChild(modal);
         }
     }
+
+    formatDateForInput(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    applyDateFilter(period) {
+        let startDate = null;
+        let endDate = new Date();
+        endDate.setHours(23, 59, 59, 999); // End of today
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Start of today
+
+        switch (period) {
+            case 'today':
+                startDate = today;
+                break;
+            case 'week':
+                startDate = new Date(today);
+                startDate.setDate(today.getDate() - 6); // Last 7 days including today
+                break;
+            case 'month':
+                startDate = new Date(today);
+                startDate.setDate(1); // First day of current month
+                break;
+            case 'custom':
+                startDate = this.dateFilter.startDate;
+                endDate = this.dateFilter.endDate;
+                endDate.setHours(23, 59, 59, 999); // End of the selected day
+                break;
+            default: // 'all'
+                startDate = null;
+                endDate = null;
+        }
+
+        this.filterOrders(startDate, endDate);
+    }
+
+    applyStatusFilter(status) {
+        // Get current date filter
+        const { startDate, endDate } = this.dateFilter;
+        
+        // Apply both date and status filters
+        this.filterOrders(startDate, endDate, status);
+    }
+
+    filterOrders(startDate, endDate, status = 'all') {
+        // Start with all orders
+        let filtered = [...this.orders];
+
+        // Apply date filter if dates are provided
+        if (startDate && endDate) {
+            filtered = filtered.filter(order => {
+                const orderDate = new Date(order.created_at);
+                return orderDate >= startDate && orderDate <= endDate;
+            });
+        }
+
+        // Apply status filter if not 'all'
+        if (status !== 'all') {
+            filtered = filtered.filter(order => order.status.toLowerCase() === status);
+        }
+
+        // Update filtered orders and refresh table
+        this.filteredOrders = filtered;
+        this.updateOrdersTable();
+
+        // Show feedback if no results
+        if (filtered.length === 0) {
+            this.showNotification('No orders match the selected filters', 'info');
+        }
+    }
 }
 
-// Initialize the orders page
-window.ordersPage = new OrdersPage();
-
-// Register the orders page with the router
-window.router.addRoute('orders', async () => {
-    await window.ordersPage.initialize();
+// Initialize the orders page - diletakkan di akhir file
+document.addEventListener('DOMContentLoaded', () => {
+    // Pastikan instance dari ordersPage tersedia untuk event listener
+    if (!window.ordersPage) {
+        window.ordersPage = new OrdersPage();
+    }
 }); 

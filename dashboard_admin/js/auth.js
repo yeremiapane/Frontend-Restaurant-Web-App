@@ -1,6 +1,6 @@
 class AuthManager {
     constructor() {
-        this.token = localStorage.getItem('auth_token');
+        this.token = localStorage.getItem('token');
         this.setupEventListeners();
     }
 
@@ -93,7 +93,7 @@ class AuthManager {
             }
 
             // Clear local storage
-            localStorage.removeItem('auth_token');
+            localStorage.removeItem('token');
             localStorage.removeItem('user_data');
 
             // Redirect to login page

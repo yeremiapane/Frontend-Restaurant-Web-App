@@ -49,25 +49,54 @@ class Router {
             contentContainer.innerHTML = '<div class="loading">Loading...</div>';
         }
 
-        // Handle page navigation
-        if (this.routes[page]) {
-            try {
-                console.log('Executing route handler for:', page);
-                await this.routes[page]();
-                this.currentPage = page;
-                history.pushState({ page }, '', `#${page}`);
-            } catch (error) {
-                console.error('Error loading page:', error);
-                if (contentContainer) {
-                    contentContainer.innerHTML = '<div class="error">Error loading page: ' + error.message + '</div>';
+        // Coba beberapa kali untuk menangani route yang belum siap
+        const maxRetries = 3;
+        let retryCount = 0;
+        
+        const tryExecuteRoute = async () => {
+            if (this.routes[page]) {
+                try {
+                    console.log('Executing route handler for:', page);
+                    await this.routes[page]();
+                    this.currentPage = page;
+                    history.pushState({ page }, '', `#${page}`);
+                    return true;
+                } catch (error) {
+                    console.error('Error loading page:', error);
+                    if (contentContainer) {
+                        contentContainer.innerHTML = '<div class="error">Error loading page: ' + error.message + '</div>';
+                    }
+                    return false;
                 }
+            } else {
+                console.log(`Route "${page}" not yet registered (attempt ${retryCount + 1}/${maxRetries + 1})`);
+                return false;
             }
-        } else {
-            console.error('Route not found:', page);
-            if (contentContainer) {
-                contentContainer.innerHTML = '<div class="error">Page not found</div>';
+        };
+        
+        // Try immediately first
+        if (await tryExecuteRoute()) return;
+        
+        // If route not available, retry a few times with delays
+        const executeWithRetry = async () => {
+            if (retryCount >= maxRetries) {
+                console.error(`Route "${page}" still not found after ${maxRetries} retries`);
+                if (contentContainer) {
+                    contentContainer.innerHTML = `<div class="error">Page "${page}" not found</div>`;
+                }
+                return;
             }
-        }
+            
+            retryCount++;
+            await new Promise(resolve => setTimeout(resolve, 500 * retryCount)); // Increase delay with each retry
+            
+            if (await tryExecuteRoute()) return;
+            
+            // Try again if didn't succeed
+            executeWithRetry();
+        };
+        
+        executeWithRetry();
     }
 
     registerPageInstance(pageName, instance) {

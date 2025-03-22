@@ -2,7 +2,10 @@
     background: white;
     border-radius: 0.5rem;
     box-shadow: var(--shadow);
-    margin: 1rem;
+    margin: 0 0 1.5rem 0;
+    height: calc(100vh - 180px);
+    display: flex;
+    flex-direction: column;
 }
 
 .orders-header {
@@ -43,9 +46,30 @@
     color: #64748b;
 }
 
+.orders-table-container {
+    width: 100%;
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    border-radius: 0.5rem;
+}
+
+.orders-table-scroll {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
 .orders-table {
     width: 100%;
+    min-width: 1000px; /* Increased to prevent squishing */
     border-collapse: collapse;
+    table-layout: fixed;
 }
 
 .orders-table th,
@@ -53,17 +77,76 @@
     padding: 1rem;
     text-align: left;
     border-bottom: 1px solid #e2e8f0;
-    vertical-align: top;
 }
 
 .orders-table th {
+    position: sticky;
+    top: 0;
     background: #f8fafc;
+    z-index: 10;
     font-weight: 600;
-    color: #64748b;
+    box-shadow: 0 1px 0 #e2e8f0;
 }
 
-.orders-table tbody tr:hover {
-    background: #f8fafc;
+/* Fixed column widths for better layout */
+.orders-table th:nth-child(1),
+.orders-table td:nth-child(1) {
+    width: 100px;
+}
+
+.orders-table th:nth-child(2),
+.orders-table td:nth-child(2) {
+    width: 100px;
+}
+
+.orders-table th:nth-child(3),
+.orders-table td:nth-child(3) {
+    width: 200px;
+}
+
+.orders-table th:nth-child(4),
+.orders-table td:nth-child(4) {
+    width: 200px;
+}
+
+.orders-table th:nth-child(5),
+.orders-table td:nth-child(5) {
+    width: 120px;
+}
+
+.orders-table th:nth-child(6),
+.orders-table td:nth-child(6) {
+    width: 120px;
+}
+
+.orders-table th:nth-child(7),
+.orders-table td:nth-child(7) {
+    width: 150px;
+}
+
+.orders-table th:nth-child(8),
+.orders-table td:nth-child(8) {
+    width: 120px;
+}
+
+/* Improved scrollbar styles */
+.orders-table-scroll::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.orders-table-scroll::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.orders-table-scroll::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+.orders-table-scroll::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
 }
 
 .order-status {
@@ -523,114 +606,80 @@ select, input {
 
 /* Responsive Styles */
 @media screen and (max-width: 1024px) {
-    .orders-page {
-        padding: 0.5rem;
+    .orders-container {
+        height: calc(100vh - 150px);
     }
-
+    
     .page-header {
-        padding: 0 0.5rem;
-    }
-
-    .page-header h2 {
-        font-size: 1.25rem;
-    }
-
-    #new-order-btn {
-        padding: 0.5rem 1rem;
-    }
-
-    .orders-table-container {
-        border-radius: 0;
-        box-shadow: none;
-    }
-
-    /* Make table scrollable horizontally */
-    .orders-table-wrapper {
-        position: relative;
-        width: 100%;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    /* Adjust column widths for mobile */
-    .orders-table th:nth-child(3),
-    .orders-table td:nth-child(3) {
-        width: 150px;
-    }
-
-    .orders-table th:nth-child(4),
-    .orders-table td:nth-child(4) {
-        width: 150px;
+        margin-bottom: 1rem;
     }
 }
 
 @media screen and (max-width: 768px) {
+    .orders-container {
+        height: calc(100vh - 130px);
+        margin: 0;
+        border-radius: 0;
+    }
+    
+    .orders-table-container {
+        border-radius: 0;
+    }
+    
     .page-header {
-        flex-direction: column;
-        align-items: stretch;
+        padding: 0.5rem;
+        margin-bottom: 0.5rem;
     }
-
-    #new-order-btn {
-        width: 100%;
-        justify-content: center;
-    }
-
-    /* Modal adjustments for mobile */
-    .modal-content {
-        width: 95%;
-        margin: 1rem;
-        max-height: 90vh;
-    }
-
-    .form-row {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-
-    .menu-select-group,
-    .quantity-group,
-    .notes-group {
-        width: 100%;
-    }
-
-    .btn-remove-item {
-        width: 100%;
-        margin-top: 0.5rem;
+    
+    .orders-table th,
+    .orders-table td {
+        padding: 0.75rem 0.5rem;
     }
 }
 
 @media screen and (max-width: 480px) {
+    .orders-container {
+        height: calc(100vh - 110px);
+    }
+    
     .orders-table th,
     .orders-table td {
-        padding: 0.5rem;
-        font-size: 0.875rem;
-    }
-
-    .order-items-list,
-    .order-notes-list {
-        max-height: 80px;
+        padding: 0.5rem 0.25rem;
         font-size: 0.8125rem;
     }
-
-    .status-badge {
-        padding: 0.25rem 0.5rem;
-        font-size: 0.75rem;
-    }
-
+    
+    /* Adjust order actions for smaller screens */
     .order-actions {
-        display: flex;
-        flex-wrap: wrap;
+        flex-direction: column;
         gap: 0.25rem;
     }
-
+    
     .btn-view,
     .btn-process,
     .btn-start,
     .btn-finish,
     .btn-complete {
-        padding: 0.25rem;
-        font-size: 0.75rem;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
+
+/* Mobile optimizations */
+@media (pointer: coarse) {
+    .orders-table th, 
+    .orders-table td {
+        padding: 0.75rem 0.5rem;
+    }
+    
+    .btn-view,
+    .btn-process,
+    .btn-start,
+    .btn-finish,
+    .btn-complete {
+        min-height: 44px;
+        min-width: 44px;
     }
 }
 
@@ -1066,5 +1115,142 @@ select, input {
 
     .btn-secondary:hover {
         background: #333333;
+    }
+}
+
+/* Filter styles */
+.filter-container {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.date-filter,
+.status-filter {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.filter-select {
+    padding: 0.5rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.375rem;
+    background-color: white;
+    min-width: 150px;
+    cursor: pointer;
+}
+
+.custom-date-range {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #f8fafc;
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+    border: 1px solid #e2e8f0;
+}
+
+.date-input {
+    padding: 0.5rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.375rem;
+    width: 140px;
+}
+
+.filter-btn {
+    padding: 0.5rem 1rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
+}
+
+.filter-btn:hover {
+    background: var(--primary-dark);
+}
+
+/* Responsive filter styles */
+@media screen and (max-width: 1024px) {
+    .filter-container {
+        margin-bottom: 1rem;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .filter-container {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .date-filter,
+    .status-filter {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .filter-select {
+        width: 100%;
+    }
+    
+    .custom-date-range {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+    
+    .date-input {
+        flex: 1;
+        min-width: 120px;
+    }
+    
+    #new-order-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .filter-container {
+        flex-direction: column;
+    }
+    
+    .date-filter,
+    .status-filter {
+        width: 100%;
+    }
+    
+    .custom-date-range {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .date-input {
+        width: 100%;
+    }
+    
+    .filter-btn {
+        width: 100%;
+    }
+}
+
+/* Dark mode support for filters */
+@media (prefers-color-scheme: dark) {
+    .filter-select,
+    .date-input {
+        background-color: #333;
+        color: #fff;
+        border-color: #444;
+    }
+    
+    .custom-date-range {
+        background-color: #262626;
+        border-color: #444;
+        color: #fff;
     }
 } 

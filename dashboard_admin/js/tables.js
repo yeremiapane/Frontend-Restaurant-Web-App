@@ -51,7 +51,7 @@ class TablesPage {
 
     async loadTables() {
         try {
-            const token = localStorage.getItem('auth_token');
+            const token = localStorage.getItem('token');
             const response = await fetch('http://localhost:8080/admin/tables', {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -125,7 +125,7 @@ class TablesPage {
 
     async updateTableStatus(tableId, status) {
         try {
-            const token = localStorage.getItem('auth_token');
+            const token = localStorage.getItem('token');
             console.log('Updating table status:', { tableId, status });
 
             const response = await fetch(`http://localhost:8080/admin/tables/${tableId}`, {

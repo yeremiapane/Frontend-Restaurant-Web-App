@@ -7,7 +7,7 @@ class WebSocketClient {
     }
 
     connect() {
-        const token = localStorage.getItem('auth_token');
+        const token = localStorage.getItem('token');
         if (!token) {
             console.error('No auth token found');
             return;
@@ -135,7 +135,7 @@ class WebSocketClient {
 
     async fetchUpdatedStats() {
         try {
-            const token = localStorage.getItem('auth_token');
+            const token = localStorage.getItem('token');
             const response = await fetch('http://localhost:8080/admin/dashboard/stats', {
                 headers: {
                     'Authorization': `Bearer ${token}`,

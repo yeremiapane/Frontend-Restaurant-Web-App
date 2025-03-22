@@ -55,7 +55,7 @@ class MenuPage {
 
     async loadCategories() {
         try {
-            const token = localStorage.getItem('auth_token');
+            const token = localStorage.getItem('token');
             const response = await fetch('http://localhost:8080/categories', {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -86,7 +86,7 @@ class MenuPage {
             const response = await fetch('http://localhost:8080/menus', {
                 method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
             });
 
@@ -573,7 +573,7 @@ class MenuPage {
             const response = await fetch(`http://localhost:8080/admin/menus/${menuId}`, {
                 method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
             });
             
@@ -874,7 +874,7 @@ class MenuPage {
                 const response = await fetch(endpoint, {
                     method: method,
                     headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
                     },
                     body: formData
                 });
@@ -978,7 +978,7 @@ class MenuPage {
             const response = await fetch(`http://localhost:8080/menus/by-category?category=${categoryId}`, {
                 method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
             });
 
@@ -1026,7 +1026,7 @@ class MenuPage {
     }
 
     setupWebSocket() {
-        const token = localStorage.getItem('auth_token');
+        const token = localStorage.getItem('token');
         if (!token) {
             console.error('No auth token found');
             return;
@@ -1122,7 +1122,7 @@ class MenuPage {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
                     },
                     body: JSON.stringify({ name })
                 });

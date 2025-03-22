@@ -83,22 +83,11 @@ document.addEventListener('DOMContentLoaded', async function() {
         window.wsClient.connect();
     }
 
+    // Tunggu sebentar untuk memberi waktu semua modul halaman terdaftar ke router
+    await new Promise(resolve => setTimeout(resolve, 500));
+
     // Initialize router after everything else is set up
     if (window.router) {
         window.router.initialize();
     }
 });
-
-// Initialize router
-const router = new Router();
-
-// Check authentication before initializing
-if (!window.authManager.isAuthenticated()) {
-    window.location.href = '/Frontend/auth/login/index.html';
-} else {
-    // Initialize WebSocket connection
-    window.wsClient.connect();
-
-    // Initialize router
-    router.init();
-}

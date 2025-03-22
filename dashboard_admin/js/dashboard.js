@@ -248,7 +248,7 @@ class DashboardPage {
 
     async fetchOrderStats() {
         try {
-            const token = localStorage.getItem('auth_token');
+            const token = localStorage.getItem('token');
             const response = await fetch('http://localhost:8080/admin/orders/stats', {
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -270,7 +270,7 @@ class DashboardPage {
 
     async fetchPaymentStats() {
         try {
-            const token = localStorage.getItem('auth_token');
+            const token = localStorage.getItem('token');
             const response = await fetch('http://localhost:8080/admin/payments/stats', {
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -292,7 +292,7 @@ class DashboardPage {
 
     async fetchDashboardStats() {
         try {
-            const token = localStorage.getItem('auth_token');
+            const token = localStorage.getItem('token');
             const response = await fetch('http://localhost:8080/admin/dashboard/stats', {
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -326,7 +326,7 @@ class DashboardPage {
 
     async loadDashboardData() {
         try {
-            const token = localStorage.getItem('auth_token');
+            const token = localStorage.getItem('token');
             const response = await fetch('http://localhost:8080/admin/dashboard/stats', {
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -718,7 +718,7 @@ class DashboardPage {
 
     async updateRecentOrders() {
         try {
-            const token = localStorage.getItem('auth_token');
+            const token = localStorage.getItem('token');
             const response = await fetch('http://localhost:8080/admin/orders/getflow', {
                 headers: {
                     'Authorization': `Bearer ${token}`,
