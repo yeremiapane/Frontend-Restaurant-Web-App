@@ -41,9 +41,7 @@ class OrdersPage {
     }
 
     async initialize() {
-        console.log('Initializing orders page');
         if (this.initialized) {
-            console.log('Orders already initialized');
             return;
         }
 
@@ -68,7 +66,6 @@ class OrdersPage {
             this.setupWebSocketListeners();
 
             this.initialized = true;
-            console.log('Orders initialization complete');
         } catch (error) {
             console.error('Error initializing orders:', error);
             this.initialized = false;
@@ -340,7 +337,6 @@ class OrdersPage {
             const result = await response.json();
             if (result.status && result.data) {
                 this.customers = result.data;
-                console.log('Loaded customers:', this.customers);
             }
         } catch (error) {
             console.error('Error loading customers:', error);
@@ -352,74 +348,112 @@ class OrdersPage {
         if (!tableBody) return;
 
         // Use filtered orders instead of all orders
-        tableBody.innerHTML = this.filteredOrders.map(order => `
-            <tr class="order-row" data-order-id="${order.id}">
-                <td>Order #${order.id}</td>
-                <td>Table ${order.table ? order.table.number : 'N/A'}</td>
-                <td>
-                    <div class="order-items-list">
-                        ${order.order_items.map(item => `
-                            <div class="order-item-row">
-                                <span class="item-name">${item.menu.name} x${item.quantity}</span>
-                            </div>
-                        `).join('')}
-                    </div>
-                </td>
-                <td>
-                    <div class="order-notes-list">
-                        ${order.order_items.map(item => `
-                            <div class="order-note-row">
-                                ${item.notes ? `<span class="item-notes">${item.notes}</span>` : '-'}
-                            </div>
-                        `).join('')}
-                    </div>
-                </td>
-                <td>${this.formatCurrency(order.total_amount)}</td>
-                <td>
-                    <span class="status-badge status-${order.status.toLowerCase()}">
-                        ${this.formatStatus(order.status)}
-                    </span>
-                </td>
-                <td>${this.formatDate(order.created_at)}</td>
-                <td>
-                    <div class="order-actions">
-                        <button class="btn-view" onclick="ordersPage.viewOrderDetails(${order.id})">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                        ${this.renderActionButtons(order)}
-                    </div>
-                </td>
-            </tr>
-        `).join('');
+        tableBody.innerHTML = this.filteredOrders.map(order => {
+            // Format the order items - limit to 3 items
+            const maxItemsToShow = 3;
+            const totalItems = order.order_items.length;
+            const visibleItems = order.order_items.slice(0, maxItemsToShow);
+            const hiddenItems = totalItems > maxItemsToShow ? totalItems - maxItemsToShow : 0;
+            
+            const itemsHtml = visibleItems.map(item => `
+                <div class="order-item-row">
+                    <span class="item-name" title="${item.menu.name} x${item.quantity}">${item.menu.name} x${item.quantity}</span>
+                </div>
+            `).join('');
+            
+            // Add "+X more" indicator if there are hidden items
+            const moreItemsHtml = hiddenItems > 0 ? 
+                `<div class="order-item-row more-items">
+                    <span class="more-indicator" title="${hiddenItems} more items">+${hiddenItems} more</span>
+                </div>` : '';
+            
+            // Format the notes - limit to 3 notes
+            const visibleNotes = order.order_items.slice(0, maxItemsToShow);
+            const hiddenNotes = totalItems > maxItemsToShow ? totalItems - maxItemsToShow : 0;
+            
+            const notesHtml = visibleNotes.map(item => `
+                <div class="order-note-row">
+                    ${item.notes ? `<span class="item-notes" title="${item.notes}">${item.notes}</span>` : '-'}
+                </div>
+            `).join('');
+            
+            // Add "+X more" indicator for notes if there are hidden notes
+            const moreNotesHtml = hiddenNotes > 0 ? 
+                `<div class="order-note-row more-notes">
+                    <span class="more-indicator" title="${hiddenNotes} more notes">+${hiddenNotes} more</span>
+                </div>` : '';
+            
+            return `
+                <tr class="order-row" data-order-id="${order.id}">
+                    <td title="Order #${order.id}">Order #${order.id}</td>
+                    <td title="Table ${order.table ? order.table.number : 'N/A'}">Table ${order.table ? order.table.number : 'N/A'}</td>
+                    <td>
+                        <div class="order-items-list fixed-height">
+                            ${itemsHtml}
+                            ${moreItemsHtml}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="order-notes-list fixed-height">
+                            ${notesHtml}
+                            ${moreNotesHtml}
+                        </div>
+                    </td>
+                    <td title="${this.formatCurrency(order.total_amount)}">${this.formatCurrency(order.total_amount)}</td>
+                    <td>
+                        <span class="status-badge status-${order.status.toLowerCase()}" title="${this.formatStatus(order.status)}">
+                            ${this.formatStatusShort(order.status)}
+                        </span>
+                    </td>
+                    <td title="${this.formatDate(order.created_at)}">${this.formatDate(order.created_at)}</td>
+                    <td>
+                        <div class="order-actions">
+                            ${this.renderActionButtons(order)}
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
     }
 
     renderActionButtons(order) {
         let buttons = '';
         
-        switch (order.status.toLowerCase()) {
+        // Tambahkan tombol lihat detail di awal
+        buttons += `<button class="btn-view" title="Lihat Detail" onclick="ordersPage.viewOrderDetails(${order.id})">
+            <i class="fas fa-eye"></i>
+        </button>`;
+        
+        switch(order.status.toLowerCase()) {
             case 'pending_payment':
-                buttons += `
-                    <button class="btn-process" onclick="ordersPage.processPayment(${order.id})">
-                        <i class="fas fa-credit-card"></i>
-                    </button>`;
+                buttons += `<button class="btn-process" title="Proses Pembayaran" onclick="ordersPage.processPayment(${order.id})">
+                    <i class="fas fa-money-bill-wave"></i>
+                </button>`;
                 break;
             case 'paid':
                 buttons += `
-                    <button class="btn-start" onclick="ordersPage.startCooking(${order.id})">
+                    <button class="btn-start" title="Mulai Memasak" onclick="ordersPage.startCooking(${order.id})">
                         <i class="fas fa-utensils"></i>
-                    </button>`;
+                    </button>
+                    <button class="btn-receipt" title="Cetak Struk" onclick="ordersPage.printReceipt(${order.id})">
+                        <i class="fas fa-receipt"></i>
+                    </button>
+                `;
                 break;
             case 'in_progress':
-                buttons += `
-                    <button class="btn-finish" onclick="ordersPage.finishCooking(${order.id})">
-                        <i class="fas fa-check"></i>
-                    </button>`;
+                buttons += `<button class="btn-finish" title="Selesai Memasak" onclick="ordersPage.finishCooking(${order.id})">
+                    <i class="fas fa-check-circle"></i>
+                </button>`;
                 break;
             case 'ready':
-                buttons += `
-                    <button class="btn-complete" onclick="ordersPage.completeOrder(${order.id})">
-                        <i class="fas fa-flag-checkered"></i>
-                    </button>`;
+                buttons += `<button class="btn-complete" title="Pesanan Selesai" onclick="ordersPage.completeOrder(${order.id})">
+                    <i class="fas fa-check-double"></i>
+                </button>`;
+                break;
+            case 'completed':
+                buttons += `<button class="btn-receipt" title="Cetak Struk" onclick="ordersPage.printReceipt(${order.id})">
+                    <i class="fas fa-receipt"></i>
+                </button>`;
                 break;
         }
         
@@ -527,9 +561,14 @@ class OrdersPage {
                 if (openModal) {
                     this.updateOrderDetailsModal(result.data);
                 }
+                
+                // Return the order data for functions that need it
+                return result.data;
             }
+            return null;
         } catch (error) {
             console.error('Error refreshing order data:', error);
+            return null;
         }
     }
 
@@ -631,7 +670,7 @@ class OrdersPage {
                         </div>
 
                         <div class="order-items-section">
-                            <h3>Item Pesanan</h3>
+                            <h3>Item Pesanan <span class="item-count">(${order.order_items.length} items)</span></h3>
                             <div class="items-table-container">
                                 <table class="items-table">
                                     <thead>
@@ -713,28 +752,40 @@ class OrdersPage {
 
     renderDetailActionButton(order) {
         let button = '';
-        switch (order.status.toLowerCase()) {
+        
+        switch(order.status.toLowerCase()) {
             case 'pending_payment':
                 button = `<button class="btn-primary" onclick="ordersPage.processPayment(${order.id})">
-                    <i class="fas fa-credit-card"></i> Proses Pembayaran
+                    <i class="fas fa-money-bill-wave"></i> Proses Pembayaran
                 </button>`;
                 break;
             case 'paid':
-                button = `<button class="btn-primary" onclick="ordersPage.startCooking(${order.id})">
-                    <i class="fas fa-utensils"></i> Mulai Masak
-                </button>`;
+                button = `
+                    <button class="btn-primary" onclick="ordersPage.startCooking(${order.id})">
+                        <i class="fas fa-utensils"></i> Mulai Memasak
+                    </button>
+                    <button class="btn-receipt" onclick="ordersPage.printReceipt(${order.id})">
+                        <i class="fas fa-receipt"></i> Cetak Struk
+                    </button>
+                `;
                 break;
             case 'in_progress':
                 button = `<button class="btn-primary" onclick="ordersPage.finishCooking(${order.id})">
-                    <i class="fas fa-check"></i> Selesai Masak
+                    <i class="fas fa-check-circle"></i> Selesai Memasak
                 </button>`;
                 break;
             case 'ready':
                 button = `<button class="btn-primary" onclick="ordersPage.completeOrder(${order.id})">
-                    <i class="fas fa-flag-checkered"></i> Selesai
+                    <i class="fas fa-check-double"></i> Pesanan Selesai
+                </button>`;
+                break;
+            case 'completed':
+                button = `<button class="btn-receipt" onclick="ordersPage.printReceipt(${order.id})">
+                    <i class="fas fa-receipt"></i> Cetak Struk
                 </button>`;
                 break;
         }
+        
         return button;
     }
 
@@ -756,7 +807,19 @@ class OrdersPage {
     }
 
     formatStatus(status) {
-        return status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+        return status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    }
+
+    formatStatusShort(status) {
+        // Create shorter versions of status for badges
+        switch(status.toLowerCase()) {
+            case 'pending_payment':
+                return 'Pending';
+            case 'in_progress':
+                return 'Processing';
+            default:
+                return status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        }
     }
 
     async render() {
@@ -887,7 +950,6 @@ class OrdersPage {
     }
 
     renderOrderItemInput(index) {
-        console.log('Rendering menu options with menus:', this.menus);
         return `
             <div class="order-item-input" data-index="${index}">
                 <div class="form-row">
@@ -896,7 +958,6 @@ class OrdersPage {
                         <select class="menu-select" required onchange="ordersPage.updateItemPrice(this)">
                             <option value="">Pilih menu</option>
                             ${this.menus.map(menu => {
-                                console.log('Mapping menu:', menu);
                                 return `<option value="${menu.ID}" data-price="${menu.price}">${menu.name} - ${this.formatCurrency(menu.price)}</option>`;
                             }).join('')}
                         </select>
@@ -948,7 +1009,6 @@ class OrdersPage {
         }
 
         const itemInputs = document.querySelectorAll('.order-item-input');
-        console.log('Found item inputs:', itemInputs.length);
         
         // Dapatkan menu price untuk setiap item
         const items = Array.from(itemInputs).map(item => {
@@ -957,20 +1017,14 @@ class OrdersPage {
             const quantity = parseInt(item.querySelector('.quantity-input').value, 10);
             const notes = item.querySelector('.notes-input').value;
             
-            console.log('Processing item:', { menuId, quantity, notes });
-            console.log('Available menus:', this.menus);
-
             // Dapatkan harga menu dari this.menus
             const selectedMenu = this.menus.find(menu => menu.ID === menuId);
-            console.log('Selected menu:', selectedMenu);
 
             if (!menuId || isNaN(menuId) || !selectedMenu) {
-                console.log('Invalid menu selection. Menu ID:', menuId);
                 return null;
             }
 
             if (!quantity || isNaN(quantity) || quantity <= 0) {
-                console.log('Invalid quantity:', quantity);
                 return null;
             }
 
@@ -983,8 +1037,6 @@ class OrdersPage {
             };
         }).filter(item => item !== null);
 
-        console.log('Processed items:', items);
-
         if (items.length === 0) {
             this.showNotification('Mohon pilih menu dan jumlah yang valid', 'error');
             return;
@@ -992,7 +1044,6 @@ class OrdersPage {
 
         // Hitung total amount
         const totalAmount = items.reduce((total, item) => total + (item.price * item.quantity), 0);
-        console.log('Total amount:', totalAmount);
 
         try {
             const token = localStorage.getItem('token');
@@ -1003,7 +1054,6 @@ class OrdersPage {
                 table_id: parseInt(tableId, 10),
                 session_key: sessionKey
             };
-            console.log('Sending customer data:', customerData);
 
             const customerResponse = await fetch('http://localhost:8080/admin/customers', {
                 method: 'POST',
@@ -1015,7 +1065,6 @@ class OrdersPage {
             });
 
             const customerResponseData = await customerResponse.json();
-            console.log('Customer response data:', JSON.stringify(customerResponseData, null, 2));
 
             if (!customerResponse.ok) {
                 throw new Error(customerResponseData.message || 'Failed to create customer');
@@ -1028,7 +1077,6 @@ class OrdersPage {
             }
 
             const customerId = customerResponseData.data.ID;
-            console.log('Created customer with ID:', customerId);
 
             const orderData = {
                 table_id: parseInt(tableId, 10),
@@ -1044,8 +1092,6 @@ class OrdersPage {
                     status: item.status
                 }))
             };
-
-            console.log('Sending order data:', JSON.stringify(orderData, null, 2));
 
             // Coba kirim request dengan format data yang berbeda
             const orderResponse = await fetch('http://localhost:8080/orders', {
@@ -1071,7 +1117,6 @@ class OrdersPage {
             });
 
             const orderResponseData = await orderResponse.json();
-            console.log('Order response:', JSON.stringify(orderResponseData, null, 2));
 
             if (!orderResponse.ok) {
                 console.error('Order creation failed. Request details:', {
@@ -1204,6 +1249,599 @@ class OrdersPage {
         if (filtered.length === 0) {
             this.showNotification('No orders match the selected filters', 'info');
         }
+    }
+
+    async printReceipt(orderId) {
+        try {
+            // Show loading notification
+            this.showNotification('Menyiapkan struk pembayaran...', 'info');
+            
+            // Fetch the most up-to-date order data
+            const token = localStorage.getItem('token');
+            const response = await fetch(`http://localhost:8080/admin/orders/${orderId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Gagal mengambil data pesanan');
+            }
+
+            const result = await response.json();
+            if (!result.status || !result.data) {
+                throw new Error('Format data pesanan tidak valid');
+            }
+
+            const order = result.data;
+            
+            // Create receipt HTML
+            const receiptHTML = this.generateReceiptHTML(order);
+            
+            // Create print window
+            const printWindow = window.open('', '_blank', 'width=400,height=600');
+            if (!printWindow) {
+                throw new Error('Popup blocker mungkin mencegah pencetakan struk. Mohon izinkan popup untuk situs ini.');
+            }
+            
+            printWindow.document.write(receiptHTML);
+            printWindow.document.close();
+            
+            // Wait for resources to load then print
+            setTimeout(() => {
+                printWindow.print();
+                printWindow.onafterprint = function() {
+                    printWindow.close();
+                };
+            }, 500);
+            
+            this.showNotification('Struk berhasil dicetak', 'success');
+        } catch (error) {
+            console.error('Error printing receipt:', error);
+            this.showNotification('Gagal mencetak struk: ' + error.message, 'error');
+        }
+    }
+    
+    generateReceiptHTML(order) {
+        // Calculate today's date with proper formatting
+        const today = new Date();
+        const formattedDate = today.toLocaleDateString('id-ID', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+        
+        const formattedTime = today.toLocaleTimeString('id-ID', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        
+        // Format tanggal asli pesanan
+        const orderDate = new Date(order.created_at);
+        const orderFormattedDate = orderDate.toLocaleDateString('id-ID', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        });
+        
+        const orderFormattedTime = orderDate.toLocaleTimeString('id-ID', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        
+        // Calculate subtotal, tax, and final total
+        let subtotal = 0;
+        order.order_items.forEach(item => {
+            subtotal += (item.price * item.quantity);
+        });
+        
+        const total = subtotal;
+        
+        // Prepare QR code data
+        const tableNum = order.table ? order.table.number : 'TO';
+        const orderId = order.id;
+        const totalPayment = total;
+        const qrData = `TABLE:${tableNum}-ORDER:${orderId}-TOTAL:${totalPayment}`;
+        const Code = `${tableNum}${orderId}${totalPayment}`;
+        
+        // Generate receipt items HTML
+        const itemsHTML = order.order_items.map(item => {
+            const itemTotal = item.price * item.quantity;
+            return `
+            <tr>
+                <td class="item-name">${item.menu ? item.menu.name : 'Unknown'}</td>
+                <td class="qty">${item.quantity}x</td>
+                <td class="price">${this.formatCurrency(item.price)}</td>
+                <td class="subtotal">${this.formatCurrency(itemTotal)}</td>
+            </tr>
+            ${item.notes ? `<tr class="notes-row"><td colspan="4" class="item-notes">* ${item.notes}</td></tr>` : ''}
+        `}).join('');
+        
+        // Return full receipt HTML with styling
+        return `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Struk Pembayaran #${order.id}</title>
+            <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+            <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+            <style>
+                @page {
+                    size: 80mm 297mm;
+                    margin: 0;
+                }
+                
+                :root {
+                    --primary-color: #7c3aed;
+                    --accent-color: #a78bfa;
+                    --text-color: #374151;
+                    --text-light: #6b7280;
+                    --bg-color: #ffffff;
+                    --border-color: #e5e7eb;
+                    --highlight-bg: #f5f3ff;
+                }
+                
+                * {
+                    box-sizing: border-box;
+                    margin: 0;
+                    padding: 0;
+                }
+                
+                body {
+                    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+                    margin: 0;
+                    padding: 0;
+                    background-color: #f9fafb;
+                    color: var(--text-color);
+                    line-height: 1.4;
+                    -webkit-font-smoothing: antialiased;
+                }
+                
+                .print-container {
+                    background-color: #f9fafb;
+                    min-height: 100vh;
+                    display: flex;
+                    justify-content: center;
+                    padding: 20px 0;
+                }
+                
+                .receipt {
+                    width: 80mm;
+                    background-color: var(--bg-color);
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                    border-radius: 12px;
+                    overflow: hidden;
+                    position: relative;
+                }
+                
+                .receipt::before {
+                    content: "";
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 6px;
+                    height: 100%;
+                    background: linear-gradient(to bottom, var(--primary-color), var(--accent-color));
+                }
+                
+                .header {
+                    text-align: center;
+                    padding: 16px 14px;
+                    background-color: var(--primary-color);
+                    color: white;
+                    position: relative;
+                }
+                
+                .header::after {
+                    content: "";
+                    position: absolute;
+                    bottom: -10px;
+                    left: 0;
+                    width: 100%;
+                    height: 20px;
+                    background-color: var(--primary-color);
+                    clip-path: polygon(0 0, 100% 0, 50% 100%);
+                }
+                
+                .restaurant-name {
+                    font-size: 22px;
+                    font-weight: 700;
+                    letter-spacing: 0.5px;
+                    margin-bottom: 4px;
+                    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+                }
+                
+                .restaurant-address {
+                    font-size: 10px;
+                    opacity: 0.9;
+                    margin-bottom: 2px;
+                }
+                
+                .body-content {
+                    padding: 20px 14px;
+                }
+                
+                .receipt-details {
+                    margin-bottom: 16px;
+                }
+                
+                .order-type {
+                    display: inline-block;
+                    background-color: var(--highlight-bg);
+                    color: var(--primary-color);
+                    font-weight: 700;
+                    font-size: 11px;
+                    padding: 4px 10px;
+                    border-radius: 20px;
+                    margin-bottom: 8px;
+                    border: 1px solid var(--accent-color);
+                }
+                
+                .section-title {
+                    font-weight: 700;
+                    margin-bottom: 4px;
+                    font-size: 16px;
+                    color: var(--primary-color);
+                    display: flex;
+                    align-items: center;
+                }
+                
+                .section-title::after {
+                    content: "";
+                    flex-grow: 1;
+                    height: 1px;
+                    background-color: var(--accent-color);
+                    margin-left: 10px;
+                    opacity: 0.5;
+                }
+                
+                .order-info {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 6px;
+                    font-size: 11px;
+                    margin-top: 8px;
+                }
+                
+                .order-info div {
+                    display: flex;
+                    flex-direction: column;
+                }
+                
+                .order-info .label {
+                    color: var(--text-light);
+                    font-size: 9px;
+                    margin-bottom: 2px;
+                }
+                
+                .order-info .value {
+                    font-weight: 600;
+                }
+                
+                .divider {
+                    width: 100%;
+                    height: 1px;
+                    background: repeating-linear-gradient(
+                        to right,
+                        var(--accent-color),
+                        var(--accent-color) 4px,
+                        transparent 4px,
+                        transparent 8px
+                    );
+                    margin: 12px 0;
+                }
+                
+                .items-table {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+                
+                .items-table th {
+                    font-size: 10px;
+                    text-align: left;
+                    color: var(--text-light);
+                    padding: 6px 4px;
+                    border-bottom: 1px solid var(--border-color);
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                    font-weight: 600;
+                }
+                
+                .items-table td {
+                    padding: 6px 4px;
+                    font-size: 11px;
+                    border-bottom: 1px solid var(--border-color);
+                }
+                
+                .items-table .item-name {
+                    font-weight: 600;
+                }
+                
+                .items-table .qty {
+                    text-align: center;
+                    width: 15%;
+                }
+                
+                .items-table .price,
+                .items-table .subtotal {
+                    text-align: right;
+                    width: 25%;
+                }
+                
+                .item-notes {
+                    font-size: 9px;
+                    font-style: italic;
+                    color: var(--text-light);
+                    padding: 0 4px 4px;
+                }
+                
+                .notes-row {
+                    background-color: var(--highlight-bg);
+                    opacity: 0.8;
+                }
+                
+                .summary {
+                    margin-top: 10px;
+                    margin-bottom: 10px;
+                }
+                
+                .summary-row {
+                    display: flex;
+                    justify-content: space-between;
+                    font-size: 11px;
+                    margin-bottom: 4px;
+                }
+                
+                .summary-label {
+                    color: var(--text-light);
+                }
+                
+                .summary-value {
+                    font-weight: 600;
+                }
+                
+                .total {
+                    font-weight: 700;
+                    font-size: 16px;
+                    margin-top: 4px;
+                    padding: 8px 0;
+                    border-radius: 4px;
+                    background-color: var(--highlight-bg);
+                    text-align: center;
+                    color: var(--primary-color);
+                }
+                
+                .payment-info {
+                    background-color: var(--highlight-bg);
+                    border-radius: 8px;
+                    padding: 10px;
+                    margin: 12px 0;
+                }
+                
+                .payment-info .summary-row {
+                    font-size: 12px;
+                }
+                
+                .qrcode {
+                    text-align: center;
+                    margin: 10px 0;
+                    font-family: 'Roboto Mono', monospace;
+                }
+                
+                .qrcode-container {
+                    margin: 0 auto 8px;
+                    max-width: 100px;
+                    padding: 8px;
+                    background: white;
+                    border-radius: 4px;
+                    border: 1px solid var(--border-color);
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+                }
+                
+                .qrcode-data {
+                    font-size: 8px;
+                    color: var(--text-light);
+                    overflow-wrap: break-word;
+                    word-wrap: break-word;
+                    margin-top: 5px;
+                }
+                
+                .order-id {
+                    font-size: 12px;
+                    font-weight: 700;
+                    color: var(--primary-color);
+                    background-color: var(--highlight-bg);
+                    border-radius: 4px;
+                    padding: 2px 8px;
+                    display: inline-block;
+                }
+                
+                .footer {
+                    text-align: center;
+                    padding: 20px 10px;
+                    position: relative;
+                    border-top: 1px dashed var(--accent-color);
+                    background-color: var(--highlight-bg);
+                }
+                
+                .footer p {
+                    font-size: 12px;
+                    margin: 4px 0;
+                }
+                
+                .footer p:first-child {
+                    font-weight: 700;
+                    color: var(--primary-color);
+                }
+                
+                .footer::before,
+                .footer::after {
+                    content: "";
+                    position: absolute;
+                    top: -10px;
+                    width: 20px;
+                    height: 20px;
+                    background-color: #f9fafb;
+                    border-radius: 50%;
+                }
+                
+                .footer::before {
+                    left: -10px;
+                }
+                
+                .footer::after {
+                    right: -10px;
+                }
+                
+                @media print {
+                    .print-container {
+                        padding: 0;
+                        display: block;
+                        background-color: white;
+                    }
+                    
+                    .receipt {
+                        width: 100%;
+                        box-shadow: none;
+                        border-radius: 0;
+                    }
+                    
+                    @page {
+                        size: 80mm auto;
+                        margin: 0;
+                    }
+                    
+                    body {
+                        width: 80mm;
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="print-container">
+                <div class="receipt">
+                    <div class="header">
+                        <div class="restaurant-name">RESTO APP</div>
+                        <div class="restaurant-address">Jl. Maju Terus No.123, Jakarta</div>
+                        <div class="restaurant-address">Telp: (021) 1234 5678</div>
+                    </div>
+                    
+                    <div class="body-content">
+                        <div class="receipt-details">
+                            <div class="order-type">${order.table ? `DINE IN - MEJA ${order.table.number}` : 'TAKEAWAY'}</div>
+                            
+                            <div class="section-title">STRUK PEMBAYARAN</div>
+                            
+                            <div class="order-info">
+                                <div>
+                                    <span class="label">No. Pesanan</span>
+                                    <span class="value order-id">#${order.id}</span>
+                                </div>
+                                <div>
+                                    <span class="label">Tanggal</span>
+                                    <span class="value">${orderFormattedDate}</span>
+                                </div>
+                                <div>
+                                    <span class="label">Waktu Pesan</span>
+                                    <span class="value">${orderFormattedTime}</span>
+                                </div>
+                                <div>
+                                    <span class="label">Kasir</span>
+                                    <span class="value">Admin</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="divider"></div>
+                        
+                        <table class="items-table">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th class="qty">Qty</th>
+                                    <th class="price">Harga</th>
+                                    <th class="subtotal">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${itemsHTML}
+                            </tbody>
+                        </table>
+                        
+                        <div class="divider"></div>
+                        
+                        <div class="summary">
+                            <div class="summary-row">
+                                <span class="summary-label">Subtotal</span>
+                                <span class="summary-value">${this.formatCurrency(subtotal)}</span>
+                            </div>
+                                                       
+                            <div class="total">
+                                TOTAL: ${this.formatCurrency(total)}
+                            </div>
+                        </div>
+                        
+                        <div class="payment-info">
+                            <div class="summary-row">
+                                <span class="summary-label">DIBAYAR</span>
+                                <span class="summary-value">${this.formatCurrency(total)}</span>
+                            </div>
+                            <div class="summary-row">
+                                <span class="summary-label">KEMBALI</span>
+                                <span class="summary-value">Rp 0</span>
+                            </div>
+                        </div>
+                        
+                        <div class="qrcode">
+                            <div class="qrcode-container" id="qrcode"></div>
+                            <div class="qrcode-data">${Code}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="footer">
+                        <p>Terima kasih atas kunjungan Anda!</p>
+                        <p>Silakan datang kembali</p>
+                    </div>
+                </div>
+            </div>
+            
+            <script>
+                // Generate QR Code using qrcode-generator library
+                window.onload = function() {
+                    try {
+                        // Setup QR code
+                        const qrData = '${qrData}';
+                        const typeNumber = 4;
+                        const errorCorrectionLevel = 'L';
+                        const qr = qrcode(typeNumber, errorCorrectionLevel);
+                        qr.addData(qrData);
+                        qr.make();
+                        
+                        // Display QR code
+                        document.getElementById('qrcode').innerHTML = qr.createImgTag(3, 0);
+                        
+                        // Style the QR code image
+                        const qrImg = document.querySelector('#qrcode img');
+                        if (qrImg) {
+                            qrImg.style.width = '100%';
+                            qrImg.style.height = 'auto';
+                            qrImg.style.maxWidth = '100px';
+                            qrImg.style.display = 'block';
+                            qrImg.style.margin = '0 auto';
+                        }
+                    } catch (error) {
+                        console.error('Error generating QR code:', error);
+                        document.getElementById('qrcode').innerHTML = 'QR Code Error';
+                    }
+                };
+            </script>
+        </body>
+        </html>
+        `;
     }
 }
 

@@ -1965,7 +1965,7 @@ class ReportsPage {
     }
 
     async handleMenuUpdate(data) {
-        console.log('Handling menu update in reports:', data);
+        // Removed excessive log
         try {
             const analyticsData = await this.fetchAnalyticsData();
             if (analyticsData) {

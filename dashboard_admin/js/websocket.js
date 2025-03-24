@@ -15,7 +15,6 @@ class WebSocketClient {
 
         // Perbaikan format URL WebSocket
         const url = `ws://localhost:8080/ws/admin?token=${token}`;
-        console.log('Connecting to WebSocket:', url);
 
         try {
             this.ws = new WebSocket(url);
@@ -43,7 +42,6 @@ class WebSocketClient {
             this.ws.onmessage = (event) => {
                 try {
                     const data = JSON.parse(event.data);
-                    console.log('Received WebSocket message:', data);
                     this.handleMessage(data);
                 } catch (error) {
                     console.error('Error parsing message:', error);
@@ -55,7 +53,6 @@ class WebSocketClient {
     }
 
     handleMessage(data) {
-        console.log('Processing WebSocket message:', data);
         
         // Handle different event types
         switch (data.event) {
@@ -109,7 +106,6 @@ class WebSocketClient {
     }
 
     handleTableEvent(data) {
-        console.log('Handling table event:', data);
         window.dispatchEvent(new CustomEvent('tableUpdate', {
             detail: data.data
         }));
@@ -117,19 +113,16 @@ class WebSocketClient {
     }
 
     handleOrderEvent(data) {
-        console.log('Handling order event:', data);
         window.dispatchEvent(new CustomEvent('orderUpdate', { detail: data }));
         this.fetchUpdatedStats();
     }
 
     handlePaymentEvent(data) {
-        console.log('Handling payment event:', data);
         window.dispatchEvent(new CustomEvent('paymentUpdate', { detail: data }));
         this.fetchUpdatedStats();
     }
 
     handleMenuEvent(data) {
-        console.log('Handling menu event:', data);
         window.dispatchEvent(new CustomEvent('menuUpdate', { detail: data }));
     }
 
@@ -168,7 +161,6 @@ class WebSocketClient {
 
     send(message) {
         if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-            console.log('Sending message:', message);
             this.ws.send(JSON.stringify(message));
         } else {
             console.error('WebSocket is not connected');

@@ -127,6 +127,17 @@
 }
 
 /* Add/Edit Menu Modal */
+.btn-primary {
+    background-color: #4f46e5;
+    color: white;
+    width: 180px;
+    height: 40px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
 .menu-form {
     display: flex;
     flex-direction: column;

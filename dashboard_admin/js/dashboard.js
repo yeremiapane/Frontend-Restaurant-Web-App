@@ -9,9 +9,7 @@ class DashboardPage {
     }
 
     async initialize() {
-        console.log('Initializing dashboard page');
         if (this.initialized) {
-            console.log('Dashboard already initialized');
             return;
         }
 
@@ -39,7 +37,6 @@ class DashboardPage {
             await this.updateRecentOrders();
 
             this.initialized = true;
-            console.log('Dashboard initialization complete');
         } catch (error) {
             console.error('Error initializing dashboard:', error);
             this.initialized = false;
@@ -136,37 +133,31 @@ class DashboardPage {
     setupWebSocketListeners() {
         // Stats updates
         window.addEventListener('statsUpdate', (event) => {
-            console.log('Received stats update:', event.detail);
             this.updateDashboardStats(event.detail);
         });
 
         // Table updates
         window.addEventListener('tableUpdate', (event) => {
-            console.log('Received table update:', event.detail);
             this.handleTableUpdate(event.detail);
         });
 
         // Order updates
         window.addEventListener('orderUpdate', (event) => {
-            console.log('Received order update:', event.detail);
             this.handleOrderUpdate(event.detail);
         });
 
         // Payment updates
         window.addEventListener('paymentUpdate', (event) => {
-            console.log('Received payment update:', event.detail);
             this.handlePaymentUpdate(event.detail);
         });
 
         // Menu updates
         window.addEventListener('menuUpdate', (event) => {
-            console.log('Received menu update:', event.detail);
             this.handleMenuUpdate(event.detail);
         });
     }
 
     async handleTableUpdate(data) {
-        console.log('Handling table update in dashboard:', data);
         try {
             // Update table stats directly from the data
             if (data.table_stats) {
@@ -183,7 +174,6 @@ class DashboardPage {
     }
 
     async handleOrderUpdate(data) {
-        console.log('Handling order update in dashboard:', data);
         try {
             // Fetch latest dashboard stats
             const dashboardStats = await this.fetchDashboardStats();
@@ -217,7 +207,6 @@ class DashboardPage {
     }
 
     async handlePaymentUpdate(data) {
-        console.log('Handling payment update in dashboard:', data);
         try {
             // Update payment stats chart if available
             if (this.charts.paymentStats) {
@@ -241,7 +230,6 @@ class DashboardPage {
     }
 
     async handleMenuUpdate(data) {
-        console.log('Handling menu update in dashboard:', data);
         // Refresh dashboard data as menu changes might affect stats
         await this.loadDashboardData();
     }
@@ -348,8 +336,6 @@ class DashboardPage {
     }
 
     updateDashboardStats(data) {
-        console.log('Updating dashboard with data:', data);
-        
         // Update total orders
         const totalOrdersEl = document.getElementById('total-orders');
         const todayOrdersEl = document.getElementById('today-orders');
@@ -731,16 +717,13 @@ class DashboardPage {
             }
 
             const result = await response.json();
-            console.log('Recent orders response:', result);
             
             const ordersList = document.getElementById('recent-orders-list');
             if (!ordersList) {
-                console.log('Recent orders list element not found, skipping update');
                 return;
             }
 
             const recentOrders = result.data?.data?.recent_orders || [];
-            console.log('Recent orders data:', recentOrders);
 
             if (recentOrders.length === 0) {
                 ordersList.innerHTML = '<div class="no-orders">Tidak ada order terbaru</div>';
@@ -748,9 +731,7 @@ class DashboardPage {
             }
 
             ordersList.innerHTML = recentOrders.slice(0, 5).map(order => {
-                console.log('Processing order:', order);
                 const totalAmount = parseFloat(order.total) || 0;
-                console.log('Total amount:', totalAmount);
                 
                 return `
                 <div class="order-item">
@@ -785,15 +766,11 @@ class DashboardPage {
     }
 
     formatCurrency(amount) {
-        // Handle null, undefined, or invalid values
         if (amount === null || amount === undefined || isNaN(amount)) {
-            console.log('Invalid amount:', amount);
             return 'Rp 0';
         }
         
-        // Convert to number if it's a string
         const numericAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
-        console.log('Formatting amount:', numericAmount);
         
         return new Intl.NumberFormat('id-ID', {
             style: 'currency',

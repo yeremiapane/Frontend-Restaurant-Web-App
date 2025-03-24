@@ -287,7 +287,6 @@ class MenuPage {
             categoriesTabsContainer.addEventListener('click', (e) => {
                 if (e.target.classList.contains('category-tab')) {
                     const categoryId = e.target.dataset.category;
-                    console.log('Category tab clicked:', categoryId);
                     
                     document.querySelectorAll('.category-tab').forEach(tab => {
                         tab.classList.remove('active');
@@ -568,8 +567,6 @@ class MenuPage {
                 throw new Error('Invalid menu ID');
             }
 
-            console.log("Fetching menu with ID:", menuId);
-
             const response = await fetch(`http://localhost:8080/admin/menus/${menuId}`, {
                 method: 'GET',
                 headers: {
@@ -583,7 +580,6 @@ class MenuPage {
             }
             
             const result = await response.json();
-            console.log("Menu detail response:", result);
             
             if (!result.data) {
                 throw new Error('Menu data not found');
@@ -797,7 +793,6 @@ class MenuPage {
                     slide.remove();
                     this.removedImageUrls = this.removedImageUrls || [];
                     this.removedImageUrls.push(url);
-                    console.log('Image marked for removal:', url); // Debug log
                 }
             });
         });
@@ -848,7 +843,6 @@ class MenuPage {
                 // Tambahkan daftar gambar yang dihapus jika ada
                 if (this.removedImageUrls && this.removedImageUrls.length > 0) {
                     formData.append('removed_images', JSON.stringify(this.removedImageUrls));
-                    console.log('Sending removed images:', JSON.stringify(this.removedImageUrls)); // Debug log
                 }
 
                 // Tambahkan file gambar baru jika ada
@@ -857,7 +851,6 @@ class MenuPage {
                     Array.from(imageInput.files).forEach(file => {
                         formData.append('images', file);
                     });
-                    console.log('Adding new images:', imageInput.files.length, 'files'); // Debug log
                 }
 
                 let endpoint = mode === 'add' ? 
@@ -865,11 +858,6 @@ class MenuPage {
                     `http://localhost:8080/admin/menus/${menuId}`;
 
                 let method = mode === 'add' ? 'POST' : 'PATCH';
-
-                // Debug: Log FormData contents
-                for (let pair of formData.entries()) {
-                    console.log('FormData:', pair[0], pair[1]);
-                }
 
                 const response = await fetch(endpoint, {
                     method: method,
@@ -957,8 +945,6 @@ class MenuPage {
     }
 
     filterMenusByCategory(categoryId) {
-        console.log('Filtering by category:', categoryId); // Debug log
-
         if (categoryId === 'all') {
             // Load semua menu
             this.loadMenus();
@@ -1052,7 +1038,6 @@ class MenuPage {
             try {
                 const data = JSON.parse(event.data);
                 if (data.type === 'menu_updated') {
-                    console.log('Menu updated, reloading...');
                     this.loadMenus();
                 }
             } catch (error) {

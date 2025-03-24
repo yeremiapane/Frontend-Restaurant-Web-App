@@ -118,7 +118,6 @@ class TablesPage {
 
     setupWebSocketListeners() {
         window.addEventListener('tableUpdate', async (event) => {
-            console.log('Received table update:', event.detail);
             await this.loadTables();
         });
     }
@@ -126,7 +125,6 @@ class TablesPage {
     async updateTableStatus(tableId, status) {
         try {
             const token = localStorage.getItem('token');
-            console.log('Updating table status:', { tableId, status });
 
             const response = await fetch(`http://localhost:8080/admin/tables/${tableId}`, {
                 method: 'PATCH',

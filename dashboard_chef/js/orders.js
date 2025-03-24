@@ -195,11 +195,11 @@ class OrdersPage {
                 <div class="orders-filter">
                     <button class="filter-btn ${this.currentFilter === 'ready' ? 'active' : ''}"
                             onclick="ordersPage.setFilter('ready')">
-                        Siap Disajikan
+                        <i class="fas fa-check-circle"></i> Siap Disajikan
                     </button>
                     <button class="filter-btn ${this.currentFilter === 'completed' ? 'active' : ''}"
                             onclick="ordersPage.setFilter('completed')">
-                        Semua Selesai
+                        <i class="fas fa-list"></i> Semua Selesai
                     </button>
                 </div>
                 
@@ -214,26 +214,27 @@ class OrdersPage {
                 </div>
             </div>
 
-            <div class="completed-orders-table">
+            <div class="completed-orders-table-wrapper">
                 <div class="table-container">
-                    <table>
+                    <table class="orders-table">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Meja</th>
-                                <th>Waktu Pemesanan</th>
-                                <th>Mulai Dimasak</th>
-                                <th>Selesai Dimasak</th>
-                                <th>Durasi Memasak</th>
-                                <th>Status</th>
-                                <th>Aksi</th>
+                                <th><i class="fas fa-hashtag"></i> ID</th>
+                                <th><i class="fas fa-table"></i> Meja</th>
+                                <th><i class="fas fa-calendar-alt"></i> Waktu Pemesanan</th>
+                                <th><i class="fas fa-hourglass-start"></i> Mulai Dimasak</th>
+                                <th><i class="fas fa-hourglass-end"></i> Selesai Dimasak</th>
+                                <th><i class="fas fa-stopwatch"></i> Durasi</th>
+                                <th><i class="fas fa-flag"></i> Status</th>
+                                <th><i class="fas fa-tasks"></i> Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             ${this.getFilteredOrders().length > 0 ? this.getFilteredOrders().map(order => {
+                                const statusClass = order.status.toLowerCase();
                                 return `
-                                    <tr class="order-row ${order.status.toLowerCase()}">
-                                        <td>#${order.id}</td>
+                                    <tr class="order-row ${statusClass}" data-order-id="${order.id}">
+                                        <td class="order-id">#${order.id}</td>
                                         <td>
                                             <div class="table-number">
                                                 <i class="fas fa-table"></i>
@@ -243,9 +244,14 @@ class OrdersPage {
                                         <td>${this.formatTime(order.created_at)}</td>
                                         <td>${this.formatTime(order.start_cooking_time)}</td>
                                         <td>${this.formatTime(order.finish_cooking_time)}</td>
-                                        <td>${this.calculateCookingTime(order)}</td>
                                         <td>
-                                            <span class="status-badge ${order.status.toLowerCase()}">
+                                            <span class="cooking-time">
+                                                <i class="fas fa-clock"></i>
+                                                ${this.calculateCookingTime(order)}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="status-badge ${statusClass}">
                                                 ${order.status === 'ready' ? 'Siap' : 'Selesai'}
                                             </span>
                                         </td>
@@ -329,10 +335,6 @@ class OrdersPage {
                             <label>Durasi Memasak:</label>
                             <span>${this.calculateCookingTime(order)}</span>
                         </div>
-                        <div class="detail-group">
-                            <label>Total Harga:</label>
-                            <span>Rp ${order.total_amount.toLocaleString('id-ID')}</span>
-                        </div>
                     </div>
                     
                     <h4>Daftar Menu</h4>
@@ -342,8 +344,7 @@ class OrdersPage {
                                 <tr>
                                     <th>Menu</th>
                                     <th>Jumlah</th>
-                                    <th>Harga</th>
-                                    <th>Subtotal</th>
+                                    <th>Catatan</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -351,20 +352,12 @@ class OrdersPage {
                                     <tr>
                                         <td>
                                             <div class="item-name">${item.menu ? item.menu.name : 'Menu tidak ditemukan'}</div>
-                                            ${item.notes ? `<div class="item-notes">${item.notes}</div>` : ''}
                                         </td>
                                         <td>${item.quantity}x</td>
-                                        <td>Rp ${item.price.toLocaleString('id-ID')}</td>
-                                        <td>Rp ${(item.price * item.quantity).toLocaleString('id-ID')}</td>
+                                        <td>${item.notes ? item.notes : '-'}</td>
                                     </tr>
                                 `).join('')}
                             </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td colspan="3" class="total-label">Total</td>
-                                    <td class="total-value">Rp ${order.total_amount.toLocaleString('id-ID')}</td>
-                                </tr>
-                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -373,12 +366,37 @@ class OrdersPage {
 
         document.body.appendChild(modal);
 
+        // Animate the modal opening
+        setTimeout(() => {
+            modal.classList.add('active');
+        }, 10);
+
         // Close modal when clicking outside
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
-                modal.remove();
+                this.closeOrderModal(modal);
             }
         });
+        
+        // Close modal when pressing Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && document.querySelector('.modal.active')) {
+                this.closeOrderModal(document.querySelector('.modal.active'));
+            }
+        });
+    }
+
+    // Helper function to close modal with animation
+    closeOrderModal(modal) {
+        const modalContent = modal.querySelector('.modal-content');
+        modalContent.style.transform = 'scale(0.9)';
+        modalContent.style.opacity = '0';
+        
+        modal.classList.remove('active');
+        
+        setTimeout(() => {
+            modal.remove();
+        }, 300);
     }
 
     onMount() {

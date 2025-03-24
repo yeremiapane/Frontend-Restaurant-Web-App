@@ -3,20 +3,15 @@ class Router {
         this.routes = {};
         this.currentPage = null;
         this.pageInstances = {};
-        console.log('Router initialized');
     }
 
     addRoute(page, handler) {
-        console.log('Adding route:', page);
         this.routes[page] = handler;
     }
 
     async navigateTo(page) {
-        console.log('Navigating to:', page);
-
         // Prevent navigation to the same page
         if (this.currentPage === page) {
-            console.log('Already on page:', page);
             return;
         }
 
@@ -56,7 +51,6 @@ class Router {
         const tryExecuteRoute = async () => {
             if (this.routes[page]) {
                 try {
-                    console.log('Executing route handler for:', page);
                     await this.routes[page]();
                     this.currentPage = page;
                     history.pushState({ page }, '', `#${page}`);
@@ -100,7 +94,6 @@ class Router {
     }
 
     registerPageInstance(pageName, instance) {
-        console.log('Registering page instance:', pageName);
         this.pageInstances[pageName] = instance;
     }
 
@@ -113,7 +106,6 @@ class Router {
 
         // Get initial page from hash or default to dashboard
         const initialPage = window.location.hash.slice(1) || 'dashboard';
-        console.log('Initial page:', initialPage);
         this.navigateTo(initialPage);
     }
 }
