@@ -3,193 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Staff Dashboard - Restaurant Management System</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/styles.css">
-     <link rel="stylesheet" href="assets/css/completed.css">
-     <link rel="stylesheet" href="assets/css/tables.css">
-     <link rel="stylesheet" href="assets/css/modals.css">
+    <title>Dashboard Staf</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/img/favicon.png">
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/orders.css">
+    <link rel="stylesheet" href="styles/tables.css">
+    <!-- Google Material Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Main Container -->
-    <div class="app-container">
+    <div class="container">
         <!-- Sidebar -->
-        <nav class="sidebar" id="sidebar">
+        <aside class="sidebar">
             <div class="sidebar-header">
-                <div class="logo-container">
-                    <img src="assets/images/logo.png" alt="Logo" class="logo">
-                    <h2>RMS Staff</h2>
-                </div>
-                <button class="close-menu" id="closeMenu">
-                    <i class="fas fa-times"></i>
+                <h2>Dapur Staf</h2>
+                <!-- Close button only for mobile -->
+                <button class="sidebar-toggle-btn" id="sidebar-close">
+                    <span class="material-icons">close</span>
                 </button>
             </div>
-
-            <!-- Profile Section -->
-            <div class="profile-section">
-                <div class="profile-image">
-                    <img src="assets/images/staff-avatar.png" alt="Staff Profile">
+            <div class="user-profile">
+                <div class="user-avatar">
+                    <img src="assets/img/staff.png" alt="Staff Profile">
                 </div>
-                <div class="profile-info">
-                    <h3>John Smith</h3>
-                    <p>Staff Service</p>
+                <div class="user-info">
+                    <span class="user-name">Staf Dapur</span>
+                    <span class="user-role">Staff</span>
                 </div>
             </div>
-            
-            <!-- Menu Items -->
-            <ul class="sidebar-menu">
-                <li class="active">
-                    <a href="#" data-page="dashboard">
-                        <i class="fas fa-th-large"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" data-page="completed">
-                        <i class="fas fa-check-circle"></i>
-                        <span>Orders Completed</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" data-page="tables">
-                        <i class="fas fa-border-all"></i>
-                        <span>Tables</span>
-                    </a>
-                </li>
-            </ul>
-
-            <!-- Logout Button -->
-            <div class="logout-section">
-                <button class="logout-btn">
-                    <i class="fas fa-sign-out-alt"></i>
+            <nav class="sidebar-menu">
+                <ul>
+                    <li>
+                        <a href="#" class="menu-item active" data-page="orders">
+                            <span class="material-icons">receipt</span>
+                            <span class="menu-text">Orders</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="menu-item" data-page="tables">
+                            <span class="material-icons">table_restaurant</span>
+                            <span class="menu-text">Tables</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="logout-button" class="logout-btn">
+                    <span class="material-icons">logout</span>
                     <span>Logout</span>
                 </button>
             </div>
-        </nav>
+        </aside>
 
-        <!-- Main Content Area -->
-        <div class="main-content">
-            <!-- Top Navigation Bar -->
-            <header class="top-nav">
-                <button class="mobile-menu-toggle" id="menuToggle">
-                    <i class="fas fa-bars"></i>
+        <!-- Main content -->
+        <main class="main-content">
+            <header class="header">
+                <!-- Hamburger menu only for mobile -->
+                <button class="sidebar-toggle-btn" id="sidebar-open">
+                    <span class="material-icons">menu</span>
                 </button>
-                <div class="page-title">
-                    <h1>Dashboard</h1>
-                </div>
-                <div class="nav-actions">
-                    <div class="notification-bell">
-                        <i class="fas fa-bell"></i>
-                        <span class="notification-badge">3</span>
-                    </div>
-                </div>
+                <h1 id="page-title">Orders</h1>
             </header>
 
-            <!-- Main Content Container -->
-            <main class="content-wrapper" id="mainContent">
-                <!-- Stats Section -->
-                <div class="stats-container">
-                    <div class="stat-card available">
-                        <div class="stat-icon">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>Available Tables</h3>
-                            <div class="stat-number">12</div>
-                        </div>
-                    </div>
-
-                    <div class="stat-card occupied">
-                        <div class="stat-icon">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>Occupied Tables</h3>
-                            <div class="stat-number">8</div>
-                        </div>
-                    </div>
-
-                    <div class="stat-card dirty">
-                        <div class="stat-icon">
-                            <i class="fas fa-broom"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>Dirty Tables</h3>
-                            <div class="stat-number">3</div>
-                        </div>
-                    </div>
+            <!-- Page Content -->
+            <div class="page-content">
+                <div id="orders-page" class="page active">
+                    <!-- Orders content will be loaded here -->
+                    <div id="orders-content-container"></div>
                 </div>
-
-                <!-- Orders Section -->
-                <div class="orders-section">
-                    <div class="section-header">
-                        <h2>Active Orders</h2>
-                        <div class="search-filter-container">
-                            <div class="search-box">
-                                <i class="fas fa-search"></i>
-                                <input type="text" placeholder="Search orders...">
-                            </div>
-                            <div class="filter-group">
-                                <div class="filter-item">
-                                    <select>
-                                        <option value="all">All Status</option>
-                                        <option value="pending">Pending Payment</option>
-                                        <option value="paid">Paid</option>
-                                        <option value="cooking">Cooking</option>
-                                        <option value="ready">Ready to Serve</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="table-container">
-                        <table class="orders-table">
-                            <thead>
-                                <tr>
-                                    <th>Order ID</th>
-                                    <th>Table</th>
-                                    <th>Customer</th>
-                                    <th>Items</th>
-                                    <th>Total</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>#ORD001</td>
-                                    <td>Table 1</td>
-                                    <td>John Doe</td>
-                                    <td>
-                                        <div class="order-items">
-                                            <span>2x Nasi Goreng</span>
-                                            <span>1x Es Teh</span>
-                                        </div>
-                                    </td>
-                                    <td>Rp 75.000</td>
-                                    <td><span class="status-badge pending">Pending Payment</span></td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button class="btn-primary">Mark Paid</button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <!-- Add more order rows as needed -->
-                            </tbody>
-                        </table>
-                    </div>
+                <div id="tables-page" class="page">
+                    <!-- Tables content will be loaded here -->
+                    <div id="tables-content-container"></div>
                 </div>
-            </main>
-        </div>
-
-        <!-- Overlay -->
-        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+            </div>
+        </main>
     </div>
 
-    <script src="assets/js/script.js"></script>
-    <script src="assets/js/modals.js"></script>
-    <script src="assets/js/completed.js"></script>
+    <!-- Overlay for mobile sidebar -->
+    <div class="sidebar-overlay"></div>
+
+    <!-- Logout confirmation modal -->
+    <div id="logout-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Konfirmasi Logout</h2>
+                <button class="close-btn" id="close-logout-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Anda yakin ingin keluar dari sistem?</p>
+            </div>
+            <div class="modal-footer">
+                <button id="cancel-logout" class="btn btn-secondary">Batal</button>
+                <button id="confirm-logout" class="btn btn-primary">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Core Scripts (load these first) -->
+    <script src="js/auth.js"></script>
+    <script src="js/websocket.js"></script>
+    <script src="js/router.js"></script>
+    
+    <!-- Page Components -->
+    <script src="js/components/orders.js"></script>
+    <script src="js/components/tables.js"></script>
+    
+    <!-- Main App (should be loaded last) -->
+    <script src="js/app.js"></script>
 </body>
 </html>
