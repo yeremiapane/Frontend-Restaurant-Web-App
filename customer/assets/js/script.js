@@ -11,7 +11,7 @@
 // --------------------------------------------------------------------------
 // Konfigurasi Endpoint Backend
 // --------------------------------------------------------------------------
-const BASE_URL = "http://localhost:8080"; 
+const BASE_URL = window.API_BASE_URL || "http://localhost:8080"; 
 // Ganti dengan URL/port sesuai server Golang Anda, misal: "https://api.restaurant.com"
 
 // --------------------------------------------------------------------------
@@ -31,7 +31,7 @@ const tableId = urlParams.get('table_id') || 0; // ubah sesuai kebutuhan
 // Ambil daftar kategori dari backend: GET /categories
 async function fetchCategories() {
   try {
-    const response = await fetch('http://localhost:8080/categories');
+    const response = await fetch(`${BASE_URL}/categories`);
     if (!response.ok) throw new Error('Network response was not ok');
     const data = await response.json();
     return data.data; // return the categories array
