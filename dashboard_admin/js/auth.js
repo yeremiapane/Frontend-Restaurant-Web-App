@@ -65,7 +65,7 @@ class AuthManager {
         }
 
         try {
-            const response = await fetch('http://localhost:8080/admin/profile', {
+            const response = await fetch(`${window.API_BASE_URL}/admin/profile`, {
                 headers: {
                     'Authorization': `Bearer ${this.token}`
                 }
@@ -110,7 +110,7 @@ class AuthManager {
     }
 
     getToken() {
-        return this.token;
+        return localStorage.getItem('token');
     }
 
     isAuthenticated() {

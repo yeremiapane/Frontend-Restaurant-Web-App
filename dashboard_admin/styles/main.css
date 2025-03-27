@@ -519,3 +519,133 @@ body {
         background-color: #2563eb;
     }
 }
+
+/* Connection status indicator */
+.connection-status {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-left: 15px;
+    position: relative;
+    top: 2px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.connection-status.connected {
+    background-color: #4ade80;
+    box-shadow: 0 0 8px rgba(74, 222, 128, 0.5);
+}
+
+.connection-status.disconnected {
+    background-color: #f87171;
+    box-shadow: 0 0 8px rgba(248, 113, 113, 0.5);
+}
+
+.connection-status.connecting {
+    background-color: #fcd34d;
+    box-shadow: 0 0 8px rgba(252, 211, 77, 0.5);
+    animation: pulse-connecting 1.5s infinite;
+}
+
+@keyframes pulse-connecting {
+    0% {
+        opacity: 0.6;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.6;
+    }
+}
+
+/* Connection error message */
+.connection-error-message {
+    position: relative;
+    z-index: 10;
+    margin: 15px;
+}
+
+.connection-error {
+    background-color: #fee2e2;
+    border-left: 4px solid #ef4444;
+    padding: 15px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    animation: fade-in 0.5s ease-out;
+    gap: 15px;
+}
+
+.connection-error.serious {
+    background-color: #fecaca;
+    border-left-color: #b91c1c;
+}
+
+.connection-error .error-icon {
+    color: #ef4444;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.connection-error.serious .error-icon {
+    color: #b91c1c;
+}
+
+.connection-error .error-content {
+    flex: 1;
+}
+
+.connection-error h3 {
+    margin: 0 0 5px 0;
+    color: #b91c1c;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.connection-error p {
+    margin: 0;
+    color: #7f1d1d;
+    font-size: 14px;
+}
+
+.connection-error .retry-button,
+.connection-error .refresh-button {
+    background-color: white;
+    border: 1px solid #b91c1c;
+    color: #b91c1c;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.2s ease;
+}
+
+.connection-error .retry-button:hover,
+.connection-error .refresh-button:hover {
+    background-color: #fef2f2;
+}
+
+.connection-error .retry-button:active,
+.connection-error .refresh-button:active {
+    transform: translateY(1px);
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

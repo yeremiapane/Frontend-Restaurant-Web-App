@@ -3,6 +3,7 @@ class Router {
         this.routes = {};
         this.currentPage = null;
         this.pageInstances = {};
+        this.onBeforeNavigate = null; // Callback function to be called before navigation
     }
 
     addRoute(page, handler) {
@@ -13,6 +14,12 @@ class Router {
         // Prevent navigation to the same page
         if (this.currentPage === page) {
             return;
+        }
+        
+        // Call onBeforeNavigate if defined
+        if (typeof this.onBeforeNavigate === 'function') {
+            console.log(`Calling onBeforeNavigate from ${this.currentPage} to ${page}`);
+            this.onBeforeNavigate(this.currentPage, page);
         }
 
         // Update page title with proper capitalization

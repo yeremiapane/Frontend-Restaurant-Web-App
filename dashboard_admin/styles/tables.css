@@ -313,4 +313,55 @@
         transform: translateX(100%);
         opacity: 0;
     }
+}
+
+/* Animasi untuk highlight tabel yang baru diperbarui */
+.table-card-highlight {
+    animation: highlight-pulse 2s ease-in-out;
+}
+
+@keyframes highlight-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 20px 5px rgba(37, 99, 235, 0.5);
+        transform: translateY(-5px);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+        transform: translateY(0);
+    }
+}
+
+/* Animasi untuk tabel baru yang dibuat */
+.table-card-new {
+    animation: table-fade-in 0.5s ease-out;
+}
+
+@keyframes table-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Animasi untuk tabel yang dihapus */
+.table-card-delete {
+    animation: table-fade-out 0.5s ease-out forwards;
+}
+
+@keyframes table-fade-out {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
 } 

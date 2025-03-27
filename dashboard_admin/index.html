@@ -16,6 +16,68 @@
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Inline Styles for Global Spinner -->
+    <style>
+        .global-spinner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        .spinner-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Styling untuk error details */
+        .error-details {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #fff8f8;
+            border-left: 3px solid #e74c3c;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #555;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .error-details ul {
+            padding-left: 20px;
+            margin: 5px 0;
+        }
+        
+        .error-details li {
+            margin-bottom: 5px;
+            line-height: 1.4;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -100,16 +162,22 @@
     </div>
 
     <!-- JavaScript -->
+    <script src="js/config.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/websocket.js"></script>
     <script src="js/router.js"></script>
     <script src="js/notifications.js"></script>
     <script src="js/dashboard.js"></script>
+    <script src="js/payments.js"></script>
     <script src="js/orders.js"></script>
     <script src="js/tables.js"></script>
     <script src="js/menu.js"></script>
     <script src="js/reports.js"></script>
     <script src="js/main.js"></script>
+    <!-- QR Code library for QRIS payments -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.0/build/qrcode.min.js"></script>
+    <!-- Alternatif QR Code library -->
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
 </body>
 </html>
