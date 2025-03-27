@@ -3,33 +3,21 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
-    const button = e.target.querySelector('button');
+    const button = e.target.querySelector('button[type="submit"]');
+    
+    // Show loading state
+    button.classList.add('loading');
     
     try {
-        // Show loading state
-        button.classList.add('loading');
-        
-        const response = await fetch('http://localhost:8080/login', {
+        const response = await fetch(`${window.API_BASE_URL}/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ email, password })
         });
-
-        // Log response untuk debug
-        console.log('Response status:', response.status);
-        const responseText = await response.text();
-        console.log('Response text:', responseText);
         
-        // Parse response text ke JSON
-        let data;
-        try {
-            data = JSON.parse(responseText);
-        } catch (parseError) {
-            console.error('Error parsing response:', parseError);
-            throw new Error('Invalid response format from server');
-        }
+        const data = await response.json();
         
         if (response.ok) {
             console.log('Login response data:', data);
@@ -66,42 +54,79 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
             const role = data.data.user_role.toLowerCase();
             console.log('User role untuk redirect:', role);
             
+            // Tunggu sesaat sebelum redirect
             setTimeout(() => {
-                let redirectURL = '';
-                
-                switch (role) {
-                    case 'chef':
-                        redirectURL = '/Frontend/dashboard_chef/index.html';
-                        break;
-                    case 'admin':
-                        redirectURL = '/Frontend/dashboard_admin/index.html';
-                        break;
-                    case 'waiter':
-                        redirectURL = '/Frontend/dashboard_staff_cleaner/index.html';
-                        break;
-                    case 'staff':
-                    case 'cleaner':
-                        redirectURL = '/Frontend/dashboard_staff_cleaner/index.html';
-                        break;
-                    default:
-                        showAlert('Role tidak valid', 'error');
-                        return;
-                }
-                
-                console.log('Redirecting ke:', redirectURL);
-                
-                // Gunakan cara alternatif untuk redirect jika perlu
                 try {
-                    window.location.replace(redirectURL);
-                } catch (e) {
-                    console.error('Error saat redirect:', e);
+                    // Get current URL and path
+                    const currentURL = window.location.href;
+                    const currentPath = window.location.pathname;
+                    console.log('Current URL:', currentURL);
+                    console.log('Current path:', currentPath);
                     
-                    // Fallback redirect method
+                    // Determine if we're using Live Server
+                    const isLiveServer = currentURL.includes('5500');
+                    console.log('Using Live Server:', isLiveServer);
+                    
+                    // Determine the correct path
+                    let redirectPath = '';
+                    switch (role) {
+                        case 'chef':
+                            redirectPath = '/Frontend/dashboard_chef/index.html';
+                            break;
+                        case 'admin':
+                            redirectPath = '/Frontend/dashboard_admin/index.html';
+                            break;
+                        case 'waiter':
+                        case 'staff':
+                        case 'cleaner':
+                            redirectPath = '/Frontend/dashboard_staff_cleaner/index.html';
+                            break;
+                        default:
+                            console.error('Invalid role:', role);
+                            showAlert('Role tidak valid', 'error');
+                            return;
+                    }
+                    
+                    // Construct redirect URL
+                    const redirectURL = `${window.location.origin}${redirectPath}`;
+                    console.log('Full redirect URL:', redirectURL);
+                    
+                    // Tambahkan logging untuk diagnosa
+                    console.log('Mulai proses redirect ke: ' + redirectURL);
+                    
+                    // Lakukan redirect dengan hard reload
+                    window.location.replace(redirectURL);
+                    
+                    // Backup redirect jika replace tidak berhasil
                     setTimeout(() => {
-                        document.location.href = redirectURL;
-                    }, 100);
+                        console.log('Mencoba cara redirect alternatif');
+                        window.location.href = redirectURL;
+                        
+                        // Jika masih tidak berhasil, coba cara lain
+                        setTimeout(() => {
+                            console.log('Mencoba redirect dengan window.open');
+                            const newWindow = window.open(redirectURL, '_self');
+                            if (!newWindow) {
+                                console.error('Popup blocker mungkin mencegah redirect');
+                                showAlert('Tidak dapat melakukan redirect. Silakan klik <a href="' + redirectURL + '">di sini</a> untuk melanjutkan.', 'warning');
+                            }
+                        }, 1000);
+                    }, 1000);
+                } catch (redirectError) {
+                    console.error('Error saat redirect:', redirectError);
+                    showAlert('Terjadi kesalahan saat redirect: ' + redirectError.message, 'error');
+                    
+                    // Tampilkan link manual jika redirect gagal
+                    const loginContainer = document.querySelector('.login-container');
+                    if (loginContainer) {
+                        const manualLink = document.createElement('div');
+                        manualLink.className = 'manual-link';
+                        manualLink.innerHTML = '<p>Jika redirect tidak berhasil, silakan klik link di bawah ini:</p>' +
+                                            '<a href="' + window.location.origin + '/Frontend/dashboard_admin/index.html" class="redirect-link">Dashboard Admin</a>';
+                        loginContainer.appendChild(manualLink);
+                    }
                 }
-            }, 1000); // Delay 1 detik untuk memastikan alert terlihat
+            }, 1500); // Tingkatkan delay dari 1 detik menjadi 1.5 detik
         } else {
             throw new Error(data.message || 'Login gagal');
         }
@@ -117,16 +142,24 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 function showAlert(message, type) {
     const alert = document.createElement('div');
     alert.className = `alert ${type}`;
-    alert.textContent = message;
+    
+    // Gunakan innerHTML jika pesan mengandung HTML tag
+    if (message.includes('<a')) {
+        alert.innerHTML = message;
+    } else {
+        alert.textContent = message;
+    }
     
     document.body.appendChild(alert);
     
     // Tampilkan alert
     setTimeout(() => alert.classList.add('show'), 100);
     
-    // Hapus alert setelah 3 detik
-    setTimeout(() => {
-        alert.classList.remove('show');
-        setTimeout(() => alert.remove(), 500);
-    }, 3000);
+    // Hapus alert setelah 3 detik jika bukan warning
+    if (type !== 'warning') {
+        setTimeout(() => {
+            alert.classList.remove('show');
+            setTimeout(() => alert.remove(), 500);
+        }, 3000);
+    }
 }

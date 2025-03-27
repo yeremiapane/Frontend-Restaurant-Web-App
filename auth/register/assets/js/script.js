@@ -1,74 +1,67 @@
 document.getElementById('registerForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    const button = e.target.querySelector('button');
-    const buttonText = button.querySelector('span');
-    const loader = button.querySelector('.loader');
-    
-    // Validasi password
+    const name = document.getElementById('fullname').value;
+    const email = document.getElementById('email').value;
+    const role = document.getElementById('role').value;
     const password = document.getElementById('password').value;
     const confirmPassword = document.getElementById('confirmPassword').value;
+    const button = e.target.querySelector('button[type="submit"]');
     
     if (password !== confirmPassword) {
         showAlert('Password tidak cocok!', 'error');
         return;
     }
     
-    // Tampilkan loading
-    buttonText.style.opacity = '0';
-    loader.style.display = 'block';
+    // Show loading state
+    button.classList.add('loading');
     
     try {
-        const name = document.getElementById('fullname').value;
-        const email = document.getElementById('email').value;
-        const role = document.getElementById('role').value;
-        
-        const response = await fetch('http://localhost:8080/register', {
+        const response = await fetch(`${window.API_BASE_URL}/register`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                name,
-                email,
-                password,
-                role
-            })
+            body: JSON.stringify({ name, email, role, password })
         });
-
+        
         const data = await response.json();
         
         if (response.ok) {
-            showAlert('Registrasi berhasil! Silahkan login.', 'success');
-            
-            // Redirect ke halaman login setelah 2 detik
+            showAlert('Pendaftaran berhasil!', 'success');
             setTimeout(() => {
-                window.location.href = '../login';
-            }, 2000);
+                window.location.href = '../login/index.html';
+            }, 1500);
         } else {
-            throw new Error(data.error || 'Registrasi gagal');
+            throw new Error(data.message || 'Pendaftaran gagal');
         }
     } catch (error) {
-        showAlert(error.message || 'Terjadi kesalahan!', 'error');
+        console.error('Registration error:', error);
+        showAlert(error.message || 'Terjadi kesalahan saat mendaftar', 'error');
     } finally {
-        buttonText.style.opacity = '1';
-        loader.style.display = 'none';
+        // Hide loading state
+        button.classList.remove('loading');
     }
 });
 
-function showAlert(message, type) {
-    const alert = document.createElement('div');
-    alert.className = `alert ${type}`;
-    alert.textContent = message;
+function showAlert(message, type = 'info') {
+    const alertElement = document.createElement('div');
+    alertElement.className = `alert alert-${type}`;
+    alertElement.textContent = message;
     
-    document.body.appendChild(alert);
+    // Add to page
+    document.body.appendChild(alertElement);
     
-    // Tampilkan alert
-    setTimeout(() => alert.classList.add('show'), 100);
-    
-    // Hapus alert setelah 3 detik
+    // Show
     setTimeout(() => {
-        alert.classList.remove('show');
-        setTimeout(() => alert.remove(), 500);
+        alertElement.classList.add('show');
+    }, 10);
+    
+    // Auto-hide
+    setTimeout(() => {
+        alertElement.classList.remove('show');
+        setTimeout(() => {
+            alertElement.remove();
+        }, 300);
     }, 3000);
 }
